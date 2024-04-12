@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-      - master
+      - weserv
 jobs:
   build-android:
     name: Build App

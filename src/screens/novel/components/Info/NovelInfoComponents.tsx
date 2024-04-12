@@ -7,10 +7,11 @@ import {
   Pressable,
   Dimensions,
   StatusBar,
+  Share,
   ImageBackground,
 } from 'react-native';
 import color from 'color';
-import { IconButton, Portal } from 'react-native-paper';
+import { Surface, IconButton, Portal } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image, ImageURISource } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -93,17 +94,6 @@ const NovelThumbnail = ({
   } else {
     return (
       <Portal>
-        <IconButton
-          icon="pencil-outline"
-          style={{
-            position: 'absolute',
-            top: StatusBar.currentHeight ?? 0 + 10,
-            right: 10,
-            zIndex: 10,
-          }}
-          iconColor={theme.onBackground}
-          onPress={setCustomNovelCover}
-        />
         <Pressable
           style={{
             position: 'absolute',
@@ -122,6 +112,31 @@ const NovelThumbnail = ({
             }}
           />
         </Pressable>
+        <Surface
+          theme={{ colors: { ...theme } }}
+          style={{
+            position: 'absolute',
+            bottom: 10,
+            right: 10,
+            zIndex: 10,
+          }}
+        >
+          <IconButton
+            icon="share-variant-outline"
+            iconColor={theme.onBackground}
+            onPress={() => Share.share({ url: source })}
+          />
+          <IconButton
+            icon="content-save-outline"
+            iconColor={theme.onBackground}
+            onPress={setCustomNovelCover}
+          />
+          <IconButton
+            icon="pencil-outline"
+            iconColor={theme.onBackground}
+            onPress={setCustomNovelCover}
+          />
+        </Surface>
       </Portal>
     );
   }

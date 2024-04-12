@@ -2,10 +2,10 @@ name: Lint
 on:
   push:
     branches:
-      - master
+      - weserv
   pull_request:
     branches:
-      - master
+      - weserv
 
 jobs:
   build:
