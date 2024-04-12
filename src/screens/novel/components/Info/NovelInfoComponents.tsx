@@ -149,7 +149,7 @@ const NovelThumbnail = ({
               setDownloading(true);
               const path =
                 RNFS.DownloadDirectoryPath + '/cover-' + novelId + '.png';
-              fetchImage(pluginId, source)
+              fetchImage(pluginId, source.uri)
                 .then(async base64 => {
                   setDownloading(false);
                   if (base64) {
