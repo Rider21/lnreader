@@ -6,7 +6,6 @@ import {
   View,
   Pressable,
   Dimensions,
-  StatusBar,
   Share,
   ImageBackground,
 } from 'react-native';
@@ -19,9 +18,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Chip } from '../../../../components';
 import { coverPlaceholderColor } from '../../../../theme/colors';
+import { DownloadFolder } from '@utils/constants/download';
 import { fetchImage } from '@services/plugin/fetch';
 import { showToast } from '@utils/showToast';
-//import { getString } from '@strings/translations';
 import { ThemeColors } from '@theme/types';
 import { getString } from '@strings/translations';
 
@@ -33,7 +32,7 @@ interface CoverImageProps {
 }
 
 interface NovelThumbnailProps {
-  novelId: number;
+  novelTitle: string;
   pluginId: string;
   source: ImageURISource;
   theme: ThemeColors;
@@ -86,7 +85,7 @@ const CoverImage = ({
 };
 
 const NovelThumbnail = ({
-  novelId,
+  novelTitle,
   pluginId,
   source,
   theme,
@@ -94,7 +93,7 @@ const NovelThumbnail = ({
 }: NovelThumbnailProps) => {
   const [downloading, setDownloading] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const { bottom } = useSafeAreaInsets();
+  const bottom = useSafeAreaInsets().bottom + 10;
 
   if (!expanded) {
     return (
@@ -133,35 +132,41 @@ const NovelThumbnail = ({
             flexDirection: 'row',
             alignItems: 'flex-end',
           }}
+          elevation={3}
         >
           <IconButton
             icon="share-variant-outline"
             iconColor={theme.onBackground}
             theme={{ colors: { ...theme } }}
-            onPress={() => Share.share({ message: source })}
+            onPress={() => Share.share({ url: source.uri })}
           />
           <IconButton
             icon="content-save-outline"
             iconColor={theme.onBackground}
             disabled={downloading}
             theme={{ colors: { ...theme } }}
-            onPress={() => {
+            onPress={async () => {
               setDownloading(true);
-              const path =
-                RNFS.DownloadDirectoryPath + '/cover-' + novelId + '.png';
-              fetchImage(pluginId, source.uri)
-                .then(async base64 => {
-                  setDownloading(false);
-                  if (base64) {
-                    await RNFS.writeFile(path, base64, 'base64');
-                    return showToast('ok');
+              try {
+                const dir = DownloadFolder + '/cover/';
+                if (!(await RNFS.exists(dir))) {
+                  await RNFS.mkdir(dir);
+                }
+
+                const filePath = dir + novelTitle + '.png';
+                if (source.uri.startsWith('file://')) {
+                  await RNFS.copyFile(source.uri, filePath);
+                } else {
+                  const image = await fetchImage(pluginId, source.uri);
+                  if (image) {
+                    await RNFS.writeFile(filePath, image, 'base64');
                   }
-                  showToast('not found');
-                })
-                .catch(err => {
-                  showToast(err.toString());
-                  setDownloading(false);
-                });
+                }
+                showToast(getString('common.done'));
+              } catch (err) {
+                showToast(err.toString());
+              }
+              setDownloading(false);
             }}
           />
           <IconButton
