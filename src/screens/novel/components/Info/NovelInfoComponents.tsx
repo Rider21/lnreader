@@ -13,10 +13,15 @@ import {
 import color from 'color';
 import { Surface, IconButton, Portal } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as RNFS from 'react-native-fs';
 import { Image, ImageURISource } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Chip } from '../../../../components';
 import { coverPlaceholderColor } from '../../../../theme/colors';
+import { fetchImage } from '@services/plugin/fetch';
+import { showToast } from '@utils/showToast';
+//import { getString } from '@strings/translations';
 import { ThemeColors } from '@theme/types';
 import { getString } from '@strings/translations';
 
@@ -28,6 +33,8 @@ interface CoverImageProps {
 }
 
 interface NovelThumbnailProps {
+  novelId: number;
+  pluginId: string;
   source: ImageURISource;
   theme: ThemeColors;
   setCustomNovelCover: () => Promise<void>;
@@ -79,11 +86,15 @@ const CoverImage = ({
 };
 
 const NovelThumbnail = ({
+  novelId,
+  pluginId,
   source,
   theme,
   setCustomNovelCover,
 }: NovelThumbnailProps) => {
+  const [downloading, setDownloading] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const { bottom } = useSafeAreaInsets();
 
   if (!expanded) {
     return (
@@ -116,24 +127,47 @@ const NovelThumbnail = ({
           theme={{ colors: { ...theme } }}
           style={{
             position: 'absolute',
-            bottom: 10,
+            bottom,
             right: 10,
             zIndex: 10,
+            flexDirection: 'row',
+            alignItems: 'flex-end',
           }}
         >
           <IconButton
             icon="share-variant-outline"
             iconColor={theme.onBackground}
-            onPress={() => Share.share({ url: source })}
+            theme={{ colors: { ...theme } }}
+            onPress={() => Share.share({ message: source })}
           />
           <IconButton
             icon="content-save-outline"
             iconColor={theme.onBackground}
-            onPress={setCustomNovelCover}
+            disabled={downloading}
+            theme={{ colors: { ...theme } }}
+            onPress={() => {
+              setDownloading(true);
+              const path =
+                RNFS.DownloadDirectoryPath + '/cover-' + novelId + '.png';
+              fetchImage(pluginId, source)
+                .then(async base64 => {
+                  setDownloading(false);
+                  if (base64) {
+                    await RNFS.writeFile(path, base64, 'base64');
+                    return showToast('ok');
+                  }
+                  showToast('not found');
+                })
+                .catch(err => {
+                  showToast(err.toString());
+                  setDownloading(false);
+                });
+            }}
           />
           <IconButton
             icon="pencil-outline"
             iconColor={theme.onBackground}
+            theme={{ colors: { ...theme } }}
             onPress={setCustomNovelCover}
           />
         </Surface>
