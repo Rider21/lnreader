@@ -25,7 +25,7 @@ import { Appbar, Button, List } from '@components';
 import { AdvancedSettingsScreenProps } from '@navigators/types';
 import { StyleSheet, View } from 'react-native';
 import { getUserAgentSync } from 'react-native-device-info';
-import wsrvModal from './components/wsrvModal';
+import WSRV from './components/wsrvModal';
 import CookieManager from '@react-native-cookies/cookies';
 
 const AdvancedSettings = ({ navigation }: AdvancedSettingsScreenProps) => {
@@ -229,7 +229,7 @@ const AdvancedSettings = ({ navigation }: AdvancedSettingsScreenProps) => {
             />
           </View>
         </Modal>
-        <wsrvModal
+        <WSRV
           theme={theme}
           displayModalVisible={displayModalVisible}
           hideDisplayModal={setDisplayModal}

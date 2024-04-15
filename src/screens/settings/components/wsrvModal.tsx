@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Text, Pressable, View, useWindowDimensions } from 'react-native';
 import { useMMKVBoolean, useMMKVString } from 'react-native-mmkv';
 import { Modal, Menu, TextInput } from 'react-native-paper';
-import SettingSwitch from './components/SettingSwitch';
+import SettingSwitch from './SettingSwitch';
 import { useBoolean } from '@hooks';
 
 const availableFormats: string[] = ['jpg', 'png', 'tiff', 'webp'];
@@ -13,7 +13,7 @@ interface wsrvProps {
   hideDisplayModal: () => void;
 }
 
-const wsrvModal: React.FC<wsrvProps> = ({
+const WSRV: React.FC<wsrvProps> = ({
   theme,
   displayModalVisible,
   hideDisplayModal,
@@ -101,7 +101,7 @@ const wsrvModal: React.FC<wsrvProps> = ({
   );
 };
 
-export default wsrvModal;
+export default WSRV;
 
 const styles = StyleSheet.create({
   label: {
