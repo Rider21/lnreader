@@ -32,7 +32,7 @@ interface CoverImageProps {
 }
 
 interface NovelThumbnailProps {
-  novelTitle: string;
+  novelId: string;
   pluginId: string;
   source: ImageURISource;
   theme: ThemeColors;
@@ -85,7 +85,7 @@ const CoverImage = ({
 };
 
 const NovelThumbnail = ({
-  novelTitle,
+  novelId,
   pluginId,
   source,
   theme,
@@ -131,6 +131,7 @@ const NovelThumbnail = ({
             zIndex: 10,
             flexDirection: 'row',
             alignItems: 'flex-end',
+            borderRadius: 5,
           }}
           elevation={3}
         >
@@ -138,7 +139,7 @@ const NovelThumbnail = ({
             icon="share-variant-outline"
             iconColor={theme.onBackground}
             theme={{ colors: { ...theme } }}
-            onPress={() => Share.share({ url: source.uri })}
+            onPress={() => Share.share({ message: source.uri })}
           />
           <IconButton
             icon="content-save-outline"
@@ -148,12 +149,12 @@ const NovelThumbnail = ({
             onPress={async () => {
               setDownloading(true);
               try {
-                const dir = DownloadFolder + '/cover/';
+                const dir = DownloadFolder + '/';
                 if (!(await RNFS.exists(dir))) {
                   await RNFS.mkdir(dir);
                 }
 
-                const filePath = dir + novelTitle + '.png';
+                const filePath = dir + novelId + '.png';
                 if (source.uri.startsWith('file://')) {
                   await RNFS.copyFile(source.uri, filePath);
                 } else {

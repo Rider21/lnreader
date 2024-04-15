@@ -25,6 +25,7 @@ import { Appbar, Button, List } from '@components';
 import { AdvancedSettingsScreenProps } from '@navigators/types';
 import { StyleSheet, View } from 'react-native';
 import { getUserAgentSync } from 'react-native-device-info';
+import wsrvModal from './components/wsrvModal';
 import CookieManager from '@react-native-cookies/cookies';
 
 const AdvancedSettings = ({ navigation }: AdvancedSettingsScreenProps) => {
@@ -58,6 +59,8 @@ const AdvancedSettings = ({ navigation }: AdvancedSettingsScreenProps) => {
     setTrue: showUserAgentModal,
     setFalse: hideUserAgentModal,
   } = useBoolean();
+
+  const [displayModalVisible, setDisplayModal] = useState(false);
 
   return (
     <>
@@ -98,6 +101,12 @@ const AdvancedSettings = ({ navigation }: AdvancedSettingsScreenProps) => {
           title={getString('advancedSettingsScreen.userAgent')}
           description={userAgent}
           onPress={showUserAgentModal}
+          theme={theme}
+        />
+        <List.Item
+          title={'WSRV'}
+          description={'text1'}
+          onPress={() => setDisplayModal(true)}
           theme={theme}
         />
       </List.Section>
@@ -220,6 +229,11 @@ const AdvancedSettings = ({ navigation }: AdvancedSettingsScreenProps) => {
             />
           </View>
         </Modal>
+        <wsrvModal
+          theme={theme}
+          displayModalVisible={displayModalVisible}
+          hideDisplayModal={setDisplayModal}
+        />
       </Portal>
     </>
   );

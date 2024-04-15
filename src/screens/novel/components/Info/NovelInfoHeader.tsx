@@ -85,7 +85,7 @@ const NovelInfoHeader = ({
       >
         <NovelInfoContainer>
           <NovelThumbnail
-            novelTitle={novel.name}
+            novelId={novel.id}
             pluginId={novel.pluginId}
             source={{ uri: novel.cover }}
             theme={theme}
