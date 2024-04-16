@@ -60,7 +60,11 @@ const AdvancedSettings = ({ navigation }: AdvancedSettingsScreenProps) => {
     setFalse: hideUserAgentModal,
   } = useBoolean();
 
-  const [displayModalVisible, setDisplayModal] = useState(false);
+  const {
+    value: displayModalVisible,
+    setFalse: closeModal,
+    setTrue: openModal,
+  } = useBoolean();
 
   return (
     <>
@@ -106,7 +110,7 @@ const AdvancedSettings = ({ navigation }: AdvancedSettingsScreenProps) => {
         <List.Item
           title={'WSRV'}
           description={'text1'}
-          onPress={() => setDisplayModal(true)}
+          onPress={openModal}
           theme={theme}
         />
       </List.Section>
@@ -232,7 +236,7 @@ const AdvancedSettings = ({ navigation }: AdvancedSettingsScreenProps) => {
         <WSRV
           theme={theme}
           displayModalVisible={displayModalVisible}
-          hideDisplayModal={setDisplayModal}
+          closeModal={closeModal}
         />
       </Portal>
     </>
