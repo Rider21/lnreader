@@ -139,7 +139,18 @@ const NovelThumbnail = ({
             icon="share-variant-outline"
             iconColor={theme.onBackground}
             theme={{ colors: { ...theme } }}
-            onPress={() => Share.share({ message: source.uri })}
+            onPress={async () => {
+              let file = source.uri;
+              try {
+                if (file.startsWith('file://')) {
+                  file = await RNFS.readFile(file, 'base64');
+                }
+              } catch (err) {
+                console.log(err);
+                showToast(err.toString());
+              }
+              Share.share({ message: file, url: file });
+            }}
           />
           <IconButton
             icon="content-save-outline"
@@ -149,12 +160,10 @@ const NovelThumbnail = ({
             onPress={async () => {
               setDownloading(true);
               try {
-                const dir = DownloadFolder + '/';
-                if (!(await RNFS.exists(dir))) {
-                  await RNFS.mkdir(dir);
+                if (!(await RNFS.exists(DownloadFolder))) {
+                  await RNFS.mkdir(DownloadFolder);
                 }
-
-                const filePath = dir + novelId + '.png';
+                const filePath = DownloadFolder + '/' + novelId + '.png';
                 if (source.uri.startsWith('file://')) {
                   await RNFS.copyFile(source.uri, filePath);
                 } else {
@@ -165,6 +174,7 @@ const NovelThumbnail = ({
                 }
                 showToast(getString('common.done'));
               } catch (err) {
+                console.log(err);
                 showToast(err.toString());
               }
               setDownloading(false);

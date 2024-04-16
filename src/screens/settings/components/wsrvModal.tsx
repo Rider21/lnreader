@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { Text, Pressable, View, useWindowDimensions } from 'react-native';
+import {
+  Text,
+  Pressable,
+  View,
+  useWindowDimensions,
+  StyleSheet,
+} from 'react-native';
 import { useMMKVBoolean, useMMKVString } from 'react-native-mmkv';
 import { Modal, Menu, TextInput } from 'react-native-paper';
 import SettingSwitch from './SettingSwitch';
@@ -22,6 +28,15 @@ const WSRV: React.FC<wsrvProps> = ({
 
   const [type = availableFormats[0], setType] = useMMKVString('WSRV_TYPE');
   const [status = false, setStatus] = useMMKVBoolean('WSRV_STATUS');
+
+  const [adaptiveFilter = false, setAdaptiveFilter] = useMMKVBoolean(
+    'WSRV_ADAPTIVE_FILTER',
+  );
+  const [progressive = false, setProgressive] =
+    useMMKVBoolean('WSRV_PROGRESSIVE');
+  const [losslessCompression = false, setLosslessCompression] = useMMKVBoolean(
+    'WSRV_LOSSLESS_COMPRESSION',
+  );
 
   const {
     value: isVisible,
@@ -97,6 +112,32 @@ const WSRV: React.FC<wsrvProps> = ({
           })}
         </Menu>
       </View>
+      {type === 'png' && (
+        <SettingSwitch
+          label="Adaptive filter"
+          value={adaptiveFilter}
+          description="Use adaptive row filtering for reducing the PNG file size."
+          onPress={() => setAdaptiveFilter(prevVal => !prevVal)}
+          theme={theme}
+        />
+      )}
+      {(type === 'png' || type === 'jpg') && (
+        <SettingSwitch
+          label="Progressive"
+          value={progressive}
+          onPress={() => setProgressive(prevVal => !prevVal)}
+          theme={theme}
+        />
+      )}
+      {type === 'webp' && (
+        <SettingSwitch
+          label="Lossless compression"
+          description="Whether the resulting image should be lossless compressed."
+          value={losslessCompression}
+          onPress={() => setLosslessCompression(prevVal => !prevVal)}
+          theme={theme}
+        />
+      )}
     </Modal>
   );
 };
