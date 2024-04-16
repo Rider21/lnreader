@@ -7,7 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useMMKVBoolean, useMMKVString } from 'react-native-mmkv';
-import { Modal, Menu, TextInput } from 'react-native-paper';
+import { Modal, Menu, TextInput, overlay } from 'react-native-paper';
 import SettingSwitch from './SettingSwitch';
 import { useBoolean } from '@hooks';
 
@@ -16,13 +16,13 @@ const availableFormats: string[] = ['jpg', 'png', 'tiff', 'webp'];
 interface wsrvProps {
   theme: ThemeColors;
   displayModalVisible: boolean;
-  hideDisplayModal: () => void;
+  setDisplayModal: () => void;
 }
 
 const WSRV: React.FC<wsrvProps> = ({
   theme,
   displayModalVisible,
-  hideDisplayModal,
+  setDisplayModal,
 }) => {
   const { width: screenWidth } = useWindowDimensions();
 
@@ -47,8 +47,12 @@ const WSRV: React.FC<wsrvProps> = ({
   return (
     <Modal
       visible={displayModalVisible}
-      onRequestClose={() => hideDisplayModal(false)}
+      onRequestClose={() => setDisplayModal(false)}
       animationType="slide"
+      contentContainerStyle={[
+        styles.modalContainer,
+        { backgroundColor: overlay(2, theme.surface) },
+      ]}
     >
       <SettingSwitch
         label="WSRV"
@@ -145,6 +149,12 @@ const WSRV: React.FC<wsrvProps> = ({
 export default WSRV;
 
 const styles = StyleSheet.create({
+  modalContainer: {
+    margin: 30,
+    paddingHorizontal: 24,
+    paddingVertical: 32,
+    borderRadius: 32,
+  },
   label: {
     fontWeight: 'bold',
     fontSize: 16,

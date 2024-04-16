@@ -131,7 +131,7 @@ const NovelThumbnail = ({
             zIndex: 10,
             flexDirection: 'row',
             alignItems: 'flex-end',
-            borderRadius: 5,
+            borderRadius: 15,
           }}
           elevation={3}
         >
@@ -140,16 +140,16 @@ const NovelThumbnail = ({
             iconColor={theme.onBackground}
             theme={{ colors: { ...theme } }}
             onPress={async () => {
-              let file = source.uri;
               try {
+                let file = source.uri;
                 if (file.startsWith('file://')) {
                   file = await RNFS.readFile(file, 'base64');
                 }
+                Share.share({ message: file, url: file });
               } catch (err) {
                 console.log(err);
                 showToast(err.toString());
               }
-              Share.share({ message: file, url: file });
             }}
           />
           <IconButton
