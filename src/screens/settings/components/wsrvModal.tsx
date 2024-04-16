@@ -22,7 +22,7 @@ interface wsrvProps {
 const WSRV: React.FC<wsrvProps> = ({
   theme,
   displayModalVisible,
-  setDisplayModal,
+  closeModal,
 }) => {
   const { width: screenWidth } = useWindowDimensions();
 
@@ -47,8 +47,7 @@ const WSRV: React.FC<wsrvProps> = ({
   return (
     <Modal
       visible={displayModalVisible}
-      onRequestClose={() => setDisplayModal(false)}
-      animationType="slide"
+      onDismiss={closeModal}
       contentContainerStyle={[
         styles.modalContainer,
         { backgroundColor: overlay(2, theme.surface) },
@@ -154,6 +153,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 32,
     borderRadius: 32,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   label: {
     fontWeight: 'bold',

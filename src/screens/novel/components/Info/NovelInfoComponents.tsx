@@ -131,19 +131,20 @@ const NovelThumbnail = ({
             zIndex: 10,
             flexDirection: 'row',
             alignItems: 'flex-end',
-            borderRadius: 15,
+            borderRadius: 30,
           }}
           elevation={3}
         >
           <IconButton
             icon="share-variant-outline"
             iconColor={theme.onBackground}
-            theme={{ colors: { ...theme } }}
             onPress={async () => {
               try {
                 let file = source.uri;
                 if (file.startsWith('file://')) {
-                  file = await RNFS.readFile(file, 'base64');
+                  file =
+                    'data:image/png;base64,' +
+                    (await RNFS.readFile(file, 'base64'));
                 }
                 Share.share({ message: file, url: file });
               } catch (err) {
@@ -155,8 +156,8 @@ const NovelThumbnail = ({
           <IconButton
             icon="content-save-outline"
             iconColor={theme.onBackground}
-            disabled={downloading}
             theme={{ colors: { ...theme } }}
+            disabled={downloading}
             onPress={async () => {
               setDownloading(true);
               try {
@@ -183,7 +184,6 @@ const NovelThumbnail = ({
           <IconButton
             icon="pencil-outline"
             iconColor={theme.onBackground}
-            theme={{ colors: { ...theme } }}
             onPress={setCustomNovelCover}
           />
         </Surface>
