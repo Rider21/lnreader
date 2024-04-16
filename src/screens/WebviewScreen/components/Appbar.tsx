@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Share, View, Text } from 'react-native';
+import { View, Text } from 'react-native';
+import Share from 'react-native-share';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconButton, Menu } from 'react-native-paper';
 import WebView from 'react-native-webview';
@@ -105,7 +106,7 @@ const Appbar: React.FC<AppbarProps> = ({
             titleStyle={{ color: theme.onSurface }}
             onPress={() => {
               setMenuVisible(false);
-              Share.share({ message: currentUrl });
+              Share.open({ message: currentUrl });
             }}
           />
           <Menu.Item

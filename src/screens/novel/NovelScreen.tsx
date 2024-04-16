@@ -4,11 +4,11 @@ import {
   View,
   RefreshControl,
   StatusBar,
-  Share,
   Text,
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from 'react-native';
+import Share from 'react-native-share';
 import { Drawer } from 'react-native-drawer-layout';
 import { FlashList } from '@shopify/flash-list';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
@@ -359,7 +359,7 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
                         marginTop: (StatusBar.currentHeight || 0) + 8,
                       }}
                       onPress={() =>
-                        Share.share({
+                        Share.open({
                           message: resolveUrl(novel.pluginId, novel.path, true),
                         })
                       }

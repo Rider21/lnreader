@@ -6,9 +6,9 @@ import {
   View,
   Pressable,
   Dimensions,
-  Share,
   ImageBackground,
 } from 'react-native';
+import Share from 'react-native-share';
 import color from 'color';
 import { Surface, IconButton, Portal } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -137,25 +137,17 @@ const NovelThumbnail = ({
         >
           <IconButton
             icon="share-variant-outline"
-            iconColor={theme.onBackground}
-            onPress={async () => {
-              try {
-                let file = source.uri;
-                if (file.startsWith('file://')) {
-                  file =
-                    'data:image/png;base64,' +
-                    (await RNFS.readFile(file, 'base64'));
-                }
-                Share.share({ message: file, url: file });
-              } catch (err) {
-                console.log(err);
-                showToast(err.toString());
-              }
+            iconColor={theme.onPrimary}
+            onPress={() => {
+              Share.open({
+                [source.uri.startsWith('file://') ? 'url' : 'message']:
+                  source.uri,
+              });
             }}
           />
           <IconButton
             icon="content-save-outline"
-            iconColor={theme.onBackground}
+            iconColor={theme.onPrimary}
             theme={{ colors: { ...theme } }}
             disabled={downloading}
             onPress={async () => {
@@ -183,7 +175,7 @@ const NovelThumbnail = ({
           />
           <IconButton
             icon="pencil-outline"
-            iconColor={theme.onBackground}
+            iconColor={theme.onPrimary}
             onPress={setCustomNovelCover}
           />
         </Surface>
