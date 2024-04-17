@@ -137,7 +137,7 @@ const NovelThumbnail = ({
         >
           <IconButton
             icon="share-variant-outline"
-            iconColor={theme.onPrimary}
+            iconColor={theme.onSurface}
             onPress={() => {
               Share.open({
                 [source.uri.startsWith('file://') ? 'url' : 'message']:
@@ -147,7 +147,7 @@ const NovelThumbnail = ({
           />
           <IconButton
             icon="content-save-outline"
-            iconColor={theme.onPrimary}
+            iconColor={theme.onSurface}
             theme={{ colors: { ...theme } }}
             disabled={downloading}
             onPress={async () => {
@@ -175,7 +175,7 @@ const NovelThumbnail = ({
           />
           <IconButton
             icon="pencil-outline"
-            iconColor={theme.onPrimary}
+            iconColor={theme.onSurface}
             onPress={setCustomNovelCover}
           />
         </Surface>

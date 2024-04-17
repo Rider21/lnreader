@@ -1,13 +1,9 @@
 import * as React from 'react';
-import {
-  Text,
-  Pressable,
-  View,
-  useWindowDimensions,
-  StyleSheet,
-} from 'react-native';
+import { Text, Pressable, View, StyleSheet } from 'react-native';
 import { useMMKVBoolean, useMMKVString } from 'react-native-mmkv';
 import { Modal, Menu, TextInput, overlay } from 'react-native-paper';
+import { useSharedValue } from 'react-native-reanimated';
+import { Slider } from 'react-native-awesome-slider';
 import SettingSwitch from './SettingSwitch';
 import { useBoolean } from '@hooks';
 
@@ -24,9 +20,15 @@ const WSRV: React.FC<wsrvProps> = ({
   displayModalVisible,
   closeModal,
 }) => {
-  const { width: screenWidth } = useWindowDimensions();
-
   const [type = availableFormats[0], setType] = useMMKVString('WSRV_TYPE');
+  const [compression = '6', setCompression] = useMMKVString(
+    'WSRV_COMPRESSION_LEVEL',
+  );
+  const compressionProgress = useSharedValue(parseInt(compression, 10));
+
+  const [quality = '80', setQuality] = useMMKVString('WSRV_QUALITY');
+  const qualityProgress = useSharedValue(parseInt(quality, 10));
+
   const [status = false, setStatus] = useMMKVBoolean('WSRV_STATUS');
 
   const [adaptiveFilter = false, setAdaptiveFilter] = useMMKVBoolean(
@@ -60,69 +62,85 @@ const WSRV: React.FC<wsrvProps> = ({
         theme={theme}
       />
 
-      <View style={styles.pickerContainer}>
-        <Menu
-          style={{ flex: 1 }}
-          visible={isVisible}
-          contentStyle={{ backgroundColor: theme.surfaceVariant }}
-          anchor={
-            <Pressable
-              style={{ flex: 1, width: screenWidth - 48 }}
-              onPress={toggleCard}
-            >
-              <TextInput
-                mode="outlined"
-                label={
-                  <Text
-                    style={[
-                      styles.label,
-                      {
-                        color: isVisible ? theme.primary : theme.onSurface,
-                        backgroundColor: theme.surface,
-                      },
-                    ]}
-                  >
-                    {` ${type} 1`}
-                  </Text>
-                }
-                value={type || 'whatever'}
-                editable={false}
-                theme={{ colors: { background: 'transparent' } }}
-                outlineColor={isVisible ? theme.primary : theme.onSurface}
-                textColor={isVisible ? theme.primary : theme.onSurface}
-                right={
-                  <TextInput.Icon
-                    icon={isVisible ? 'chevron-up' : 'chevron-down'}
-                    color={isVisible ? theme.primary : theme.onSurface}
-                  />
-                }
-              />
-            </Pressable>
-          }
-          onDismiss={closeCard}
-        >
-          {availableFormats.map(val => {
-            return (
-              <Menu.Item
-                title={val}
-                titleStyle={{ color: theme.onSurfaceVariant }}
-                onPress={() => {
-                  setType(val);
-                  closeCard();
-                }}
-              />
-            );
-          })}
-        </Menu>
-      </View>
-      {type === 'png' && (
-        <SettingSwitch
-          label="Adaptive filter"
-          value={adaptiveFilter}
-          description="Use adaptive row filtering for reducing the PNG file size."
-          onPress={() => setAdaptiveFilter(prevVal => !prevVal)}
-          theme={theme}
-        />
+      <Menu
+        visible={isVisible}
+        contentStyle={{ backgroundColor: theme.surfaceVariant }}
+        anchor={
+          <Pressable style={{ flex: 1 }} onPress={toggleCard}>
+            <TextInput
+              mode="outlined"
+              label={
+                <Text
+                  style={[
+                    styles.label,
+                    {
+                      color: isVisible ? theme.primary : theme.onSurface,
+                      backgroundColor: theme.surface,
+                    },
+                  ]}
+                >
+                  {` ${type} 1`}
+                </Text>
+              }
+              value={type || 'whatever'}
+              editable={false}
+              theme={{ colors: { background: 'transparent' } }}
+              outlineColor={isVisible ? theme.primary : theme.onSurface}
+              textColor={isVisible ? theme.primary : theme.onSurface}
+              right={
+                <TextInput.Icon
+                  icon={isVisible ? 'chevron-up' : 'chevron-down'}
+                  color={isVisible ? theme.primary : theme.onSurface}
+                />
+              }
+            />
+          </Pressable>
+        }
+        onDismiss={closeCard}
+      >
+        {availableFormats.map(val => {
+          return (
+            <Menu.Item
+              title={val}
+              titleStyle={{ color: theme.onSurfaceVariant }}
+              onPress={() => {
+                setType(val);
+                closeCard();
+              }}
+            />
+          );
+        })}
+      </Menu>
+      {type === 'png' ? (
+        <>
+          <View style={[styles.card]}>
+            <Text style={styles.label}>The zlib compression level</Text>
+            <Slider
+              progress={compressionProgress}
+              onSlidingComplete={num => setCompression(num)}
+              minimumValue={useSharedValue(0)}
+              maximumValue={useSharedValue(9)}
+            />
+          </View>
+          <SettingSwitch
+            label="Adaptive filter"
+            value={adaptiveFilter}
+            description="Use adaptive row filtering for reducing the PNG file size."
+            onPress={() => setAdaptiveFilter(prevVal => !prevVal)}
+            theme={theme}
+          />
+        </>
+      ) : (
+        <View style={[styles.card]}>
+          <Text style={styles.label}>Defines the quality of the image.</Text>
+          <Slider
+            progress={qualityProgress}
+            onSlidingComplete={num => setQuality(num)}
+            minimumValue={useSharedValue(1)}
+            maximumValue={useSharedValue(100)}
+            disable={losslessCompression}
+          />
+        </View>
       )}
       {(type === 'png' || type === 'jpg') && (
         <SettingSwitch
@@ -158,11 +176,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
-  pickerContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginVertical: 8,
+  card: {
+    borderRadius: 16,
+    padding: 12,
+    marginTop: 20,
+    shadowColor: '#000',
+    backgroundColor: '#fff',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    elevation: 1,
   },
 });
