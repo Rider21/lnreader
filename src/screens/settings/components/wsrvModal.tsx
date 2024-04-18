@@ -1,9 +1,14 @@
 import * as React from 'react';
-import { Text, Pressable, View, StyleSheet } from 'react-native';
+import {
+  Text,
+  Pressable,
+  View,
+  StyleSheet,
+  useWindowDimensions,
+} from 'react-native';
 import { useMMKVBoolean, useMMKVString } from 'react-native-mmkv';
 import { Modal, Menu, TextInput, overlay } from 'react-native-paper';
-import { useSharedValue } from 'react-native-reanimated';
-import { Slider } from 'react-native-awesome-slider';
+import Slider from '@react-native-community/slider';
 import SettingSwitch from './SettingSwitch';
 import { useBoolean } from '@hooks';
 
@@ -20,20 +25,23 @@ const WSRV: React.FC<wsrvProps> = ({
   displayModalVisible,
   closeModal,
 }) => {
+  const { width: screenWidth } = useWindowDimensions();
+
   const [type = availableFormats[0], setType] = useMMKVString('WSRV_TYPE');
   const [compression = '6', setCompression] = useMMKVString(
     'WSRV_COMPRESSION_LEVEL',
   );
-  const compressionProgress = useSharedValue(parseInt(compression, 10));
+  const compressionProgress = parseInt(compression, 10);
 
   const [quality = '80', setQuality] = useMMKVString('WSRV_QUALITY');
-  const qualityProgress = useSharedValue(parseInt(quality, 10));
+  const qualityProgress = parseInt(quality, 10);
 
   const [status = false, setStatus] = useMMKVBoolean('WSRV_STATUS');
 
   const [adaptiveFilter = false, setAdaptiveFilter] = useMMKVBoolean(
     'WSRV_ADAPTIVE_FILTER',
   );
+
   const [progressive = false, setProgressive] =
     useMMKVBoolean('WSRV_PROGRESSIVE');
   const [losslessCompression = false, setLosslessCompression] = useMMKVBoolean(
@@ -62,66 +70,75 @@ const WSRV: React.FC<wsrvProps> = ({
         theme={theme}
       />
 
-      <Menu
-        visible={isVisible}
-        contentStyle={{ backgroundColor: theme.surfaceVariant }}
-        anchor={
-          <Pressable style={{ flex: 1 }} onPress={toggleCard}>
-            <TextInput
-              mode="outlined"
-              label={
-                <Text
-                  style={[
-                    styles.label,
-                    {
-                      color: isVisible ? theme.primary : theme.onSurface,
-                      backgroundColor: theme.surface,
-                    },
-                  ]}
-                >
-                  {` ${type} 1`}
-                </Text>
-              }
-              value={type || 'whatever'}
-              editable={false}
-              theme={{ colors: { background: 'transparent' } }}
-              outlineColor={isVisible ? theme.primary : theme.onSurface}
-              textColor={isVisible ? theme.primary : theme.onSurface}
-              right={
-                <TextInput.Icon
-                  icon={isVisible ? 'chevron-up' : 'chevron-down'}
-                  color={isVisible ? theme.primary : theme.onSurface}
-                />
-              }
-            />
-          </Pressable>
-        }
-        onDismiss={closeCard}
-      >
-        {availableFormats.map(val => {
-          return (
-            <Menu.Item
-              title={val}
-              titleStyle={{ color: theme.onSurfaceVariant }}
-              onPress={() => {
-                setType(val);
-                closeCard();
-              }}
-            />
-          );
-        })}
-      </Menu>
+      <View style={styles.pickerContainer}>
+        <Menu
+          style={{ flex: 1 }}
+          visible={isVisible}
+          contentStyle={{ backgroundColor: theme.surfaceVariant }}
+          anchor={
+            <Pressable
+              style={{ flex: 1, width: screenWidth - 48 }}
+              onPress={toggleCard}
+            >
+              <TextInput
+                mode="outlined"
+                label={
+                  <Text
+                    style={[
+                      styles.label,
+                      {
+                        color: isVisible ? theme.primary : theme.onSurface,
+                        backgroundColor: theme.surface,
+                      },
+                    ]}
+                  >
+                    {` Format image `}
+                  </Text>
+                }
+                value={value || 'whatever'}
+                editable={false}
+                theme={{ colors: { background: 'transparent' } }}
+                outlineColor={isVisible ? theme.primary : theme.onSurface}
+                textColor={isVisible ? theme.primary : theme.onSurface}
+                right={
+                  <TextInput.Icon
+                    icon={isVisible ? 'chevron-up' : 'chevron-down'}
+                    color={isVisible ? theme.primary : theme.onSurface}
+                  />
+                }
+              />
+            </Pressable>
+          }
+          onDismiss={closeCard}
+        >
+          {availableFormats.map(val => {
+            return (
+              <Menu.Item
+                key={val}
+                title={val}
+                titleStyle={{ color: theme.onSurfaceVariant }}
+                onPress={() => {
+                  setType(val);
+                  closeCard();
+                }}
+              />
+            );
+          })}
+        </Menu>
+      </View>
       {type === 'png' ? (
         <>
-          <View style={[styles.card]}>
-            <Text style={styles.label}>The zlib compression level</Text>
-            <Slider
-              progress={compressionProgress}
-              onSlidingComplete={num => setCompression(num)}
-              minimumValue={useSharedValue(0)}
-              maximumValue={useSharedValue(9)}
-            />
-          </View>
+          <Text style={styles.label}>The zlib compression level</Text>
+          <Slider
+            value={compressionProgress}
+            minimumValue={0}
+            maximumValue={9}
+            step={1}
+            minimumTrackTintColor={theme.primary}
+            maximumTrackTintColor={'#000000'}
+            thumbTintColor={theme.primary}
+            onSlidingComplete={value => setCompression(value.toString())}
+          />
           <SettingSwitch
             label="Adaptive filter"
             value={adaptiveFilter}
@@ -131,20 +148,25 @@ const WSRV: React.FC<wsrvProps> = ({
           />
         </>
       ) : (
-        <View style={[styles.card]}>
+        <>
           <Text style={styles.label}>Defines the quality of the image.</Text>
           <Slider
-            progress={qualityProgress}
-            onSlidingComplete={num => setQuality(num)}
-            minimumValue={useSharedValue(1)}
-            maximumValue={useSharedValue(100)}
+            value={qualityProgress}
+            minimumValue={1}
+            maximumValue={100}
+            step={1}
+            minimumTrackTintColor={theme.primary}
+            maximumTrackTintColor={'#000000'}
+            thumbTintColor={theme.primary}
+            onSlidingComplete={value => setQuality(value.toString())}
             disable={losslessCompression}
           />
-        </View>
+        </>
       )}
       {(type === 'png' || type === 'jpg') && (
         <SettingSwitch
           label="Progressive"
+          description="Adds interlacing PNG. JPEGs become progressive."
           value={progressive}
           onPress={() => setProgressive(prevVal => !prevVal)}
           theme={theme}
@@ -167,6 +189,7 @@ export default WSRV;
 
 const styles = StyleSheet.create({
   modalContainer: {
+    flex: 1,
     margin: 30,
     paddingHorizontal: 24,
     paddingVertical: 32,
@@ -176,17 +199,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
-  card: {
-    borderRadius: 16,
-    padding: 12,
-    marginTop: 20,
-    shadowColor: '#000',
-    backgroundColor: '#fff',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.1,
-    elevation: 1,
+  pickerContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 8,
   },
 });
