@@ -95,7 +95,7 @@ const WSRV: React.FC<wsrvProps> = ({
                     {` Format image `}
                   </Text>
                 }
-                value={value || 'whatever'}
+                value={type || 'whatever'}
                 editable={false}
                 theme={{ colors: { background: 'transparent' } }}
                 outlineColor={isVisible ? theme.primary : theme.onSurface}
