@@ -413,4 +413,16 @@ export interface StringMap {
   'updatesScreen.unableToGetNovel': 'string';
   'updatesScreen.updatesLower': 'string';
   'updatesScreen.updatingLibrary': 'string';
+  'wsrv.compress.label': 'string';
+  'wsrv.compress.description': 'string';
+  'wsrv.quality.label': 'string';
+  'wsrv.quality.description': 'string';
+  'wsrv.adaptiveFilter.label': 'string';
+  'wsrv.adaptiveFilter.description': 'string';
+  'wsrv.lossless.label': 'string';
+  'wsrv.lossless.description': 'string';
+  'wsrv.progressive.PNG.label': 'string';
+  'wsrv.progressive.PNG.description': 'string';
+  'wsrv.progressive.JPEG.label': 'string';
+  'wsrv.progressive.JPEG.description': 'string';
 }

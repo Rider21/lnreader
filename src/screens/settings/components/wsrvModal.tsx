@@ -1,18 +1,13 @@
 import * as React from 'react';
-import {
-  Text,
-  Pressable,
-  View,
-  StyleSheet,
-  useWindowDimensions,
-} from 'react-native';
+import { Text, Pressable, View, StyleSheet } from 'react-native';
 import { useMMKVBoolean, useMMKVString } from 'react-native-mmkv';
 import { Modal, Menu, TextInput, overlay } from 'react-native-paper';
-import Slider from '@react-native-community/slider';
+import Slider from './Slider.tsx';
 import SettingSwitch from './SettingSwitch';
 import { useBoolean } from '@hooks';
+import { getString } from '@strings/translations';
 
-const availableFormats: string[] = ['jpg', 'png', 'tiff', 'webp'];
+const availableFormats: string[] = ['JPEG', 'PNG', 'TIFF', 'WEBP'];
 
 interface wsrvProps {
   theme: ThemeColors;
@@ -25,8 +20,6 @@ const WSRV: React.FC<wsrvProps> = ({
   displayModalVisible,
   closeModal,
 }) => {
-  const { width: screenWidth } = useWindowDimensions();
-
   const [type = availableFormats[0], setType] = useMMKVString('WSRV_TYPE');
   const [compression = '6', setCompression] = useMMKVString(
     'WSRV_COMPRESSION_LEVEL',
@@ -44,7 +37,7 @@ const WSRV: React.FC<wsrvProps> = ({
 
   const [progressive = false, setProgressive] =
     useMMKVBoolean('WSRV_PROGRESSIVE');
-  const [losslessCompression = false, setLosslessCompression] = useMMKVBoolean(
+  const [lossless = false, setLossless] = useMMKVBoolean(
     'WSRV_LOSSLESS_COMPRESSION',
   );
 
@@ -76,10 +69,7 @@ const WSRV: React.FC<wsrvProps> = ({
           visible={isVisible}
           contentStyle={{ backgroundColor: theme.surfaceVariant }}
           anchor={
-            <Pressable
-              style={{ flex: 1, width: screenWidth - 48 }}
-              onPress={toggleCard}
-            >
+            <Pressable style={{ flex: 1, width: '90%' }} onPress={toggleCard}>
               <TextInput
                 mode="outlined"
                 label={
@@ -126,58 +116,50 @@ const WSRV: React.FC<wsrvProps> = ({
           })}
         </Menu>
       </View>
-      {type === 'png' ? (
+      {type === 'PNG' ? (
         <>
-          <Text style={styles.label}>The zlib compression level</Text>
           <Slider
             value={compressionProgress}
-            minimumValue={0}
-            maximumValue={9}
-            step={1}
-            minimumTrackTintColor={theme.primary}
-            maximumTrackTintColor={'#000000'}
-            thumbTintColor={theme.primary}
+            label={getString('wsrv.compress.label')}
+            description={getString('wsrv.compress.description')}
             onSlidingComplete={value => setCompression(value.toString())}
+            area={[0, 9]}
+            theme={theme}
           />
           <SettingSwitch
-            label="Adaptive filter"
             value={adaptiveFilter}
-            description="Use adaptive row filtering for reducing the PNG file size."
+            label={getString('wsrv.adaptiveFilter.label')}
+            description={getString('wsrv.adaptiveFilter.description')}
             onPress={() => setAdaptiveFilter(prevVal => !prevVal)}
             theme={theme}
           />
         </>
       ) : (
-        <>
-          <Text style={styles.label}>Defines the quality of the image.</Text>
-          <Slider
-            value={qualityProgress}
-            minimumValue={1}
-            maximumValue={100}
-            step={1}
-            minimumTrackTintColor={theme.primary}
-            maximumTrackTintColor={'#000000'}
-            thumbTintColor={theme.primary}
-            onSlidingComplete={value => setQuality(value.toString())}
-            disable={losslessCompression}
-          />
-        </>
+        <Slider
+          value={qualityProgress}
+          label={getString('wsrv.quality.label')}
+          description={getString('wsrv.quality.description')}
+          onSlidingComplete={value => setQuality(value.toString())}
+          area={[1, 100]}
+          theme={theme}
+          disabled={lossless}
+        />
       )}
-      {(type === 'png' || type === 'jpg') && (
+      {(type === 'PNG' || type === 'JPEG') && (
         <SettingSwitch
-          label="Progressive"
-          description="Adds interlacing PNG. JPEGs become progressive."
           value={progressive}
+          label={getString(`wsrv.progressive.${type}.label`)}
+          description={getString(`wsrv.progressive.${type}.description`)}
           onPress={() => setProgressive(prevVal => !prevVal)}
           theme={theme}
         />
       )}
-      {type === 'webp' && (
+      {type === 'WEBP' && (
         <SettingSwitch
-          label="Lossless compression"
-          description="Whether the resulting image should be lossless compressed."
-          value={losslessCompression}
-          onPress={() => setLosslessCompression(prevVal => !prevVal)}
+          value={lossless}
+          label={getString('wsrv.lossless.label')}
+          description={getString('wsrv.lossless.description')}
+          onPress={() => setLossless(prevVal => !prevVal)}
           theme={theme}
         />
       )}
@@ -200,10 +182,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   pickerContainer: {
-    flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    marginVertical: 8,
+    paddingVertical: 12,
+    alignItems: 'center',
   },
 });

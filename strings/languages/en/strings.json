@@ -500,5 +500,33 @@
     "unableToGetNovel": "Unable to get novel",
     "updatesLower": "updates",
     "updatingLibrary": "Updating library"
+  },
+  "wsrv": {
+    "compress": {
+      "label": "Compression level",
+      "description": "The zlib compression level."
+    },
+    "quality": {
+      "label": "Quality",
+      "description": "Defines the quality of the image."
+    },
+    "adaptiveFilter": {
+      "label": "Adaptive filter",
+      "description": "Use adaptive row filtering for reducing the PNG file size."
+    },
+    "lossless": {
+      "label": "Lossless compression",
+      "description": "Whether the resulting image should be lossless compressed."
+    },
+    "progressive": {
+      "PNG": {
+        "label": "Interlace",
+        "description": "Adds interlacing to PNG."
+      },
+      "JPEG": {
+        "label": "Progressive",
+        "description": "JPEGs become progressive."
+      }
+    }
   }
 }
