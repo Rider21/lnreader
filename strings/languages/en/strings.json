@@ -521,11 +521,11 @@
     "progressive": {
       "PNG": {
         "label": "Interlace",
-        "description": "Adds interlacing to PNG."
+        "description": "Adds interlacing to PNG. (increases file size)"
       },
       "JPEG": {
         "label": "Progressive",
-        "description": "JPEGs become progressive."
+        "description": "JPEGs become progressive. (increases file size)"
       }
     }
   }

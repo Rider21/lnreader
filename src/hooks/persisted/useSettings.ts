@@ -10,6 +10,7 @@ export const BROWSE_SETTINGS = 'BROWSE_SETTINGS';
 export const LIBRARY_SETTINGS = 'LIBRARY_SETTINGS';
 export const CHAPTER_GENERAL_SETTINGS = 'CHAPTER_GENERAL_SETTINGS';
 export const CHAPTER_READER_SETTINGS = 'CHAPTER_READER_SETTINGS';
+export const WESEREV_SETTINGS = 'WESEREV_SETTINGS';
 
 export interface AppSettings {
   /**
@@ -102,6 +103,16 @@ export interface ChapterReaderSettings {
   customThemes: ReaderTheme[];
 }
 
+export interface WSRV_SETTINGS {
+  status: boolean;
+  output: 'JPEG' | 'PNG' | 'TIFF' | 'WEBP';
+  compressionLevel: number;
+  quality: number;
+  adaptiveFilter: boolean;
+  progressive: boolean;
+  lossless: boolean;
+}
+
 const initialAppSettings: AppSettings = {
   /**
    * General settings
@@ -173,6 +184,16 @@ export const initialChapterReaderSettings: ChapterReaderSettings = {
   customCSS: '',
   customJS: '',
   customThemes: [],
+};
+
+export const initial_WSRV_Settings: WSRV_SETTINGS = {
+  status: false,
+  output: 'JPEG',
+  compressionLevel: 6,
+  quality: 80,
+  adaptiveFilter: true,
+  progressive: false,
+  lossless: false,
 };
 
 export const useAppSettings = () => {
@@ -257,5 +278,18 @@ export const useChapterReaderSettings = () => {
     setChapterReaderSettings,
     saveCustomReaderTheme,
     deleteCustomReaderTheme,
+  };
+};
+
+export const useWSRV_Settings = () => {
+  const [wsrvSettings = initial_WSRV_Settings, setSettings] =
+    useMMKVObject<WSRV_SETTINGS>(WESEREV_SETTINGS);
+
+  const setWSRV_Settings = (values: Partial<WSRV_SETTINGS>) =>
+    setSettings({ ...wsrvSettings, ...values });
+
+  return {
+    ...wsrvSettings,
+    setWSRV_Settings,
   };
 };

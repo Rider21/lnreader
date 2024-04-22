@@ -29,11 +29,20 @@ const SliderItem: React.FC<SliderProps> = ({
   return (
     <View style={[styles.container, style]}>
       <View style={styles.labelContainer}>
-        <Text style={[{ color: theme.onSurface }, styles.label]}>{label}</Text>
+        <Text style={[{ color: theme.onSurface }, styles.label]}>
+          {label + ': '}
+        </Text>
         <Text style={[{ color: theme.onSurface }, styles.labelValue]}>
           {val}
         </Text>
       </View>
+      {description && (
+        <View style={styles.descriptionContainer}>
+          <Text style={[styles.description, { color: theme.onSurfaceVariant }]}>
+            {description}
+          </Text>
+        </View>
+      )}
       <Slider
         value={value}
         minimumValue={area[0] || 0}
@@ -46,13 +55,6 @@ const SliderItem: React.FC<SliderProps> = ({
         onValueChange={num => setVal(num)}
         disabled={disabled}
       />
-      {description && (
-        <View style={styles.labelContainer}>
-          <Text style={[styles.description, { color: theme.onSurfaceVariant }]}>
-            {description}
-          </Text>
-        </View>
-      )}
     </View>
   );
 };
@@ -61,10 +63,8 @@ export default SliderItem;
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
     alignItems: 'center',
+    paddingVertical: 12,
   },
   labelContainer: {
     flex: 1,
@@ -78,6 +78,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'left',
+  },
+  descriptionContainer: {
+    flex: 1,
+    justifyContent: 'center',
   },
   description: {
     fontSize: 12,

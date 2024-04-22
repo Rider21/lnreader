@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { Text, Pressable, View, StyleSheet } from 'react-native';
-import { useMMKVBoolean, useMMKVString } from 'react-native-mmkv';
 import { Modal, Menu, TextInput, overlay } from 'react-native-paper';
 import Slider from './Slider.tsx';
 import SettingSwitch from './SettingSwitch';
 import { useBoolean } from '@hooks';
+import { useWSRV_Settings } from '@hooks/persisted';
 import { getString } from '@strings/translations';
-
 const availableFormats: string[] = ['JPEG', 'PNG', 'TIFF', 'WEBP'];
 
 interface wsrvProps {
@@ -20,26 +19,16 @@ const WSRV: React.FC<wsrvProps> = ({
   displayModalVisible,
   closeModal,
 }) => {
-  const [type = availableFormats[0], setType] = useMMKVString('WSRV_TYPE');
-  const [compression = '6', setCompression] = useMMKVString(
-    'WSRV_COMPRESSION_LEVEL',
-  );
-  const compressionProgress = parseInt(compression, 10);
-
-  const [quality = '80', setQuality] = useMMKVString('WSRV_QUALITY');
-  const qualityProgress = parseInt(quality, 10);
-
-  const [status = false, setStatus] = useMMKVBoolean('WSRV_STATUS');
-
-  const [adaptiveFilter = false, setAdaptiveFilter] = useMMKVBoolean(
-    'WSRV_ADAPTIVE_FILTER',
-  );
-
-  const [progressive = false, setProgressive] =
-    useMMKVBoolean('WSRV_PROGRESSIVE');
-  const [lossless = false, setLossless] = useMMKVBoolean(
-    'WSRV_LOSSLESS_COMPRESSION',
-  );
+  const {
+    status,
+    output,
+    compressionLevel,
+    quality,
+    adaptiveFilter,
+    progressive,
+    lossless,
+    setWSRV_Settings,
+  } = useWSRV_Settings();
 
   const {
     value: isVisible,
@@ -50,6 +39,7 @@ const WSRV: React.FC<wsrvProps> = ({
   return (
     <Modal
       visible={displayModalVisible}
+      style={{ flex: 1 }}
       onDismiss={closeModal}
       contentContainerStyle={[
         styles.modalContainer,
@@ -59,7 +49,7 @@ const WSRV: React.FC<wsrvProps> = ({
       <SettingSwitch
         label="WSRV"
         value={status}
-        onPress={() => setStatus(prevVal => !prevVal)}
+        onPress={() => setWSRV_Settings({ status: !status })}
         theme={theme}
       />
 
@@ -69,7 +59,7 @@ const WSRV: React.FC<wsrvProps> = ({
           visible={isVisible}
           contentStyle={{ backgroundColor: theme.surfaceVariant }}
           anchor={
-            <Pressable style={{ flex: 1, width: '90%' }} onPress={toggleCard}>
+            <Pressable style={{ flex: 1, width: '95%' }} onPress={toggleCard}>
               <TextInput
                 mode="outlined"
                 label={
@@ -85,7 +75,7 @@ const WSRV: React.FC<wsrvProps> = ({
                     {` Format image `}
                   </Text>
                 }
-                value={type || 'whatever'}
+                value={output}
                 editable={false}
                 theme={{ colors: { background: 'transparent' } }}
                 outlineColor={isVisible ? theme.primary : theme.onSurface}
@@ -108,7 +98,7 @@ const WSRV: React.FC<wsrvProps> = ({
                 title={val}
                 titleStyle={{ color: theme.onSurfaceVariant }}
                 onPress={() => {
-                  setType(val);
+                  setWSRV_Settings({ output: val });
                   closeCard();
                 }}
               />
@@ -119,10 +109,12 @@ const WSRV: React.FC<wsrvProps> = ({
       {type === 'PNG' ? (
         <>
           <Slider
-            value={compressionProgress}
+            value={compressionLevel}
             label={getString('wsrv.compress.label')}
             description={getString('wsrv.compress.description')}
-            onSlidingComplete={value => setCompression(value.toString())}
+            onSlidingComplete={value =>
+              setWSRV_Settings({ compressionLevel: value })
+            }
             area={[0, 9]}
             theme={theme}
           />
@@ -130,16 +122,18 @@ const WSRV: React.FC<wsrvProps> = ({
             value={adaptiveFilter}
             label={getString('wsrv.adaptiveFilter.label')}
             description={getString('wsrv.adaptiveFilter.description')}
-            onPress={() => setAdaptiveFilter(prevVal => !prevVal)}
+            onPress={() =>
+              setWSRV_Settings({ adaptiveFilter: !adaptiveFilter })
+            }
             theme={theme}
           />
         </>
       ) : (
         <Slider
-          value={qualityProgress}
+          value={quality}
           label={getString('wsrv.quality.label')}
           description={getString('wsrv.quality.description')}
-          onSlidingComplete={value => setQuality(value.toString())}
+          onSlidingComplete={value => setWSRV_Settings({ quality: value })}
           area={[1, 100]}
           theme={theme}
           disabled={lossless}
@@ -150,7 +144,7 @@ const WSRV: React.FC<wsrvProps> = ({
           value={progressive}
           label={getString(`wsrv.progressive.${type}.label`)}
           description={getString(`wsrv.progressive.${type}.description`)}
-          onPress={() => setProgressive(prevVal => !prevVal)}
+          onPress={() => setWSRV_Settings({ progressive: !progressive })}
           theme={theme}
         />
       )}
@@ -159,7 +153,7 @@ const WSRV: React.FC<wsrvProps> = ({
           value={lossless}
           label={getString('wsrv.lossless.label')}
           description={getString('wsrv.lossless.description')}
-          onPress={() => setLossless(prevVal => !prevVal)}
+          onPress={() => setWSRV_Settings({ lossless: !lossless })}
           theme={theme}
         />
       )}
@@ -182,6 +176,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   pickerContainer: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 12,
