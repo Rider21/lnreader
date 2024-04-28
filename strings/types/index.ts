@@ -421,9 +421,9 @@ export interface StringMap {
   'wsrv.adaptiveFilter.description': 'string';
   'wsrv.lossless.label': 'string';
   'wsrv.lossless.description': 'string';
-  'wsrv.progressive.PNG.label': 'string';
-  'wsrv.progressive.PNG.description': 'string';
-  'wsrv.progressive.JPEG.label': 'string';
-  'wsrv.progressive.JPEG.description': 'string';
+  'wsrv.progressive.png.label': 'string';
+  'wsrv.progressive.png.description': 'string';
+  'wsrv.progressive.jpg.label': 'string';
+  'wsrv.progressive.jpg.description': 'string';
   'wsrv.requiresAppRestart': 'string';
 }

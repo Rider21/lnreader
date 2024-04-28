@@ -519,11 +519,11 @@
       "description": "Whether the resulting image should be lossless compressed."
     },
     "progressive": {
-      "PNG": {
+      "png": {
         "label": "Interlace",
         "description": "Adds interlacing to PNG. (increases file size)"
       },
-      "JPEG": {
+      "jpg": {
         "label": "Progressive",
         "description": "JPEGs become progressive. (increases file size)"
       }

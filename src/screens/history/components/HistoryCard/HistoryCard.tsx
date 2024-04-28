@@ -25,9 +25,10 @@ const HistoryCard: React.FC<HistoryCardProps> = ({
   handleRemoveFromHistory,
   theme,
 }) => {
-  if (settings.status) {
-    history.novelCover = resolveImage(history.novelCover);
-  }
+  const uri = settings.status
+    ? resolveImage(novel.novelCover)
+    : novel.novelCover;
+
   return (
     <Pressable
       style={styles.container}
@@ -54,7 +55,7 @@ const HistoryCard: React.FC<HistoryCardProps> = ({
           }
         >
           <Image
-            source={{ uri: history.novelCover }}
+            source={{ uri }}
             progressiveRenderingEnabled={settings.progressive}
             style={styles.cover}
           />

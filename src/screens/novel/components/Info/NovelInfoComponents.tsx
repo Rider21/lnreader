@@ -57,15 +57,14 @@ const CoverImage = ({
   theme,
   hideBackdrop,
 }: CoverImageProps) => {
-  if (settings.status && source.uri) {
-    source.uri = resolveImage(source.uri);
-  }
+  const uri = settings.status ? resolveImage(source.uri) : source.uri;
+
   if (hideBackdrop) {
     return <View>{children}</View>;
   } else {
     return (
       <ImageBackground
-        source={source}
+        source={{ uri }}
         progressiveRenderingEnabled={settings.progressive}
         style={styles.coverImage}
       >
@@ -75,7 +74,7 @@ const CoverImage = ({
             backgroundColor: color(theme.background).alpha(0.7).string(),
           }}
         >
-          {source.uri ? (
+          {uri ? (
             <LinearGradient
               colors={['rgba(0,0,0,0)', theme.background]}
               locations={[0, 1]}
@@ -103,15 +102,13 @@ const NovelThumbnail = ({
   const [expanded, setExpanded] = useState(false);
   const bottom = useSafeAreaInsets().bottom + 10;
 
-  if (settings.status && source.uri) {
-    source.uri = resolveImage(source.uri);
-  }
+  const uri = settings.status ? resolveImage(source.uri) : source.uri;
 
   if (!expanded) {
     return (
       <TouchableWithoutFeedback onPress={() => setExpanded(!expanded)}>
         <Image
-          source={source}
+          source={{ uri }}
           progressiveRenderingEnabled={settings.progressive}
           style={styles.novelThumbnail}
         />
@@ -131,7 +128,7 @@ const NovelThumbnail = ({
           onPress={() => setExpanded(false)}
         >
           <Image
-            source={source}
+            source={{ uri }}
             progressiveRenderingEnabled={settings.progressive}
             style={{
               width: Dimensions.get('window').width,
@@ -157,8 +154,7 @@ const NovelThumbnail = ({
             iconColor={theme.onSurface}
             onPress={() => {
               Share.open({
-                [source.uri.startsWith('file://') ? 'url' : 'message']:
-                  source.uri,
+                [uri.startsWith('file://') ? 'url' : 'message']: uri,
               });
             }}
           />
@@ -174,10 +170,10 @@ const NovelThumbnail = ({
                   await RNFS.mkdir(DownloadFolder);
                 }
                 const filePath = DownloadFolder + '/' + novelId + '.png';
-                if (source.uri.startsWith('file://')) {
-                  await RNFS.copyFile(source.uri, filePath);
+                if (uri.startsWith('file://')) {
+                  await RNFS.copyFile(uri, filePath);
                 } else {
-                  const image = await fetchImage(pluginId, source.uri);
+                  const image = await fetchImage(pluginId, uri);
                   if (image) {
                     await RNFS.writeFile(filePath, image, 'base64');
                   }

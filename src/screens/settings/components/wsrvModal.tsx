@@ -98,8 +98,7 @@ const WSRV: React.FC<wsrvProps> = ({
           {availableFormats.map(key => {
             return (
               <Menu.Item
-                key={key}
-                title={key}
+                title={key.toUpperCase()}
                 titleStyle={{ color: theme.onSurfaceVariant }}
                 onPress={() => {
                   setVal({ ...val, output: key });
@@ -110,7 +109,7 @@ const WSRV: React.FC<wsrvProps> = ({
           })}
         </Menu>
       </View>
-      {val.output === 'PNG' ? (
+      {val.output === 'png' ? (
         <>
           <Slider
             value={val.compressionLevel}
@@ -143,24 +142,24 @@ const WSRV: React.FC<wsrvProps> = ({
           disabled={val.lossless}
         />
       )}
-      {(val.output === 'PNG' || val.output === 'JPEG') && (
+      {(val.output === 'png' || val.output === 'jpg') && (
         <SettingSwitch
           value={val.progressive}
           label={
-            val.output === 'JPEG'
-              ? getString('wsrv.progressive.JPEG.label')
-              : getString('wsrv.progressive.PNG.description')
+            val.output === 'jpg'
+              ? getString('wsrv.progressive.jpg.label')
+              : getString('wsrv.progressive.png.label')
           }
           description={
-            val.output === 'JPEG'
-              ? getString('wsrv.progressive.JPEG.description')
-              : getString('wsrv.progressive.PNG.description')
+            val.output === 'jpg'
+              ? getString('wsrv.progressive.jpg.description')
+              : getString('wsrv.progressive.png.description')
           }
           onPress={() => setVal({ ...val, progressive: !val.progressive })}
           theme={theme}
         />
       )}
-      {output === 'WEBP' && (
+      {val.output === 'webp' && (
         <SettingSwitch
           value={val.lossless}
           label={getString('wsrv.lossless.label')}

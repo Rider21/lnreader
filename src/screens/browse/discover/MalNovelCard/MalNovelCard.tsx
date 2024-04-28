@@ -11,9 +11,10 @@ interface Props {
 }
 
 const MalNovelCard: React.FC<Props> = ({ novel, onPress, theme }) => {
-  if (settings.status) {
-    novel.novelCover = resolveImage(novel.novelCover);
-  }
+  const uri = settings.status
+    ? resolveImage(novel.novelCover)
+    : novel.novelCover;
+
   return (
     <View style={[styles.container, { backgroundColor: theme.overlay3 }]}>
       <Pressable
@@ -22,7 +23,7 @@ const MalNovelCard: React.FC<Props> = ({ novel, onPress, theme }) => {
         android_ripple={{ color: theme.rippleColor }}
       >
         <Image
-          source={{ uri: novel.novelCover }}
+          source={{ uri }}
           progressiveRenderingEnabled={settings.progressive}
           style={styles.cover}
         />

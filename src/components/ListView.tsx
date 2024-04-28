@@ -30,9 +30,7 @@ const ListView = ({
   isSelected,
   onLongPress,
 }: ListViewProps) => {
-  if (settings.status) {
-    item.cover = resolveImage(item.cover);
-  }
+  const uri = settings.status ? resolveImage(item.cover) : item.cover;
   return (
     <Pressable
       android_ripple={{ color: theme.rippleColor }}
@@ -46,9 +44,7 @@ const ListView = ({
       onLongPress={onLongPress}
     >
       <Image
-        source={{
-          uri: item.cover,
-        }}
+        source={{ uri }}
         progressiveRenderingEnabled={settings.progressive}
         style={[styles.extensionIcon, inLibraryBadge ? { opacity: 0.5 } : {}]}
       />

@@ -18,15 +18,14 @@ import { FlatList } from 'react-native-gesture-handler';
 import { resolveImage, settings } from '@services/weserv/weserv';
 
 const NovelCover = ({
-  uri,
+  novelCover,
   navigateToNovel,
 }: {
-  uri: string;
+  novelCover: string;
   navigateToNovel: () => void;
 }) => {
-  if (settings.status) {
-    uri = resolveImage(uri);
-  }
+  const uri = settings.status ? resolveImage(novelCover) : novelCover;
+
   return (
     <Pressable onPress={navigateToNovel}>
       <Image
@@ -101,7 +100,7 @@ const UpdateNovelCard: React.FC<UpdateCardProps> = ({
         left={() => (
           <NovelCover
             navigateToNovel={navigateToNovel}
-            uri={chapterList[0].novelCover}
+            novelCover={chapterList[0].novelCover}
           />
         )}
         descriptionStyle={{ fontSize: 12 }}
@@ -131,7 +130,7 @@ const UpdateNovelCard: React.FC<UpdateCardProps> = ({
                   <View style={styles.novelCover}>
                     <NovelCover
                       navigateToNovel={navigateToNovel}
-                      uri={chapterList[0].novelCover}
+                      novelCover={chapterList[0].novelCover}
                     />
                   </View>
                 }
@@ -159,7 +158,7 @@ const UpdateNovelCard: React.FC<UpdateCardProps> = ({
           <View style={styles.novelCover}>
             <NovelCover
               navigateToNovel={navigateToNovel}
-              uri={chapterList[0].novelCover}
+              novelCover={chapterList[0].novelCover}
             />
           </View>
         }

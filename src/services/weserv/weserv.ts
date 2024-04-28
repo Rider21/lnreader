@@ -1,9 +1,10 @@
 import { defaultCover } from '@plugins/helpers/constants';
 import { getMMKVObject } from '@utils/mmkv/mmkv';
+import { fetchFile } from '@plugins/helpers/fetch';
 
 export interface WSRV_SETTINGS {
   status: boolean;
-  output: 'JPEG' | 'PNG' | 'TIFF' | 'WEBP';
+  output: 'jpg' | 'png' | 'tiff' | 'webp';
   compressionLevel: number;
   quality: number;
   adaptiveFilter: boolean;
@@ -11,10 +12,10 @@ export interface WSRV_SETTINGS {
   lossless: boolean;
 }
 
-export const availableFormats: string[] = ['JPEG', 'PNG', 'TIFF', 'WEBP'];
+export const availableFormats: string[] = ['jpg', 'png', 'tiff', 'webp'];
 const defaultSettings: WSRV_SETTINGS = {
   status: true,
-  output: 'JPEG',
+  output: 'jpg',
   compressionLevel: 6,
   quality: 80,
   adaptiveFilter: true,
@@ -35,29 +36,27 @@ export const resolveImage = (url: string) => {
 };
 
 export const fetchImageWSRV = async (url: string) => {
-  if (!settings.status && isBlocked(url)) {
-    return null;
+  if (settings.status && url) {
+    const imageURL = gen(url) + '&encoding=base64';
+    const image = await fetch(imageURL).then(res => res.text());
+    if (image.startsWith('data:image/')) {
+      return image.slice(image.indexOf(',') + 1);
+    } else {
+      console.log(image); // error
+    }
   }
-  const imageURL = gen(url) + '&encoding=base64';
-  const image = await fetch(imageURL).then(res => res.text());
-  if (image.startsWith('data:image/')) {
-    return image.slice(image.indexOf(',') + 1);
-  } else {
-    console.log(image); // error
-  }
-
-  return null;
+  return fetchFile(url || defaultCover);
 };
 
 function gen(url) {
   let imageURL = baseURL + '?url=' + url + '&output=' + settings.output;
 
-  if (settings.output === 'PNG') {
+  if (settings.output === 'png') {
     imageURL +=
       '&l=' +
       settings.compressionLevel +
       (settings.adaptiveFilter ? '&af' : '');
-  } else if (settings.lossless && settings.output === 'WEBP') {
+  } else if (settings.lossless && settings.output === 'webp') {
     imageURL += '&ll';
   } else {
     imageURL += '&q=' + settings.quality;
@@ -65,7 +64,7 @@ function gen(url) {
 
   if (
     settings.progressive &&
-    (settings.output === 'PNG' || settings.output === 'JPEG')
+    (settings.output === 'png' || settings.output === 'jpg')
   ) {
     imageURL += '&il';
   }
@@ -73,6 +72,7 @@ function gen(url) {
   return imageURL;
 }
 
+/*
 function isBlocked(url) {
   const aux = url.split('//')[1].split('/')[0];
   const suffix = aux.substring(aux.lastIndexOf('.') + 1);
@@ -92,3 +92,4 @@ function isBlocked(url) {
       return false;
   }
 }
+*/

@@ -1,5 +1,6 @@
 import { getPlugin } from '@plugins/pluginManager';
 import { isUrlAbsolute } from '@plugins/helpers/isAbsoluteUrl';
+import { fetchImageWSRV } from '@services/weserv/weserv';
 
 export const fetchNovel = async (pluginId: string, novelPath: string) => {
   const plugin = getPlugin(pluginId);
@@ -15,7 +16,10 @@ export const fetchImage = async (pluginId: string, imageUrl: string) => {
   if (!plugin) {
     throw new Error(`Unknown plugin: ${pluginId}`);
   }
-  return plugin.fetchImage(imageUrl);
+  if (plugin.fetchImage) {
+    return plugin.fetchImage(imageUrl);
+  }
+  return fetchImageWSRV(imageUrl);
 };
 
 export const fetchChapter = async (pluginId: string, chapterPath: string) => {
@@ -65,7 +69,8 @@ export const resolveUrl = (
     if (plugin.resolveUrl) {
       return plugin.resolveUrl(path, isNovel);
     }
-  } catch (e) {
+  } catch (err) {
+    console.log(err);
     return path;
   }
   return plugin.site + path;

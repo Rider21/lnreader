@@ -38,9 +38,7 @@ const GlobalSearchNovelItem: React.FC<Props> = ({
     }),
     [inLibrary],
   );
-  if (settings.status) {
-    novel.cover = resolveImage(novel.cover);
-  }
+  const uri = settings.status ? resolveImage(novel.cover) : novel.cover;
 
   return (
     <View style={styles.novelItem}>
@@ -51,7 +49,7 @@ const GlobalSearchNovelItem: React.FC<Props> = ({
         onLongPress={onLongPress}
       >
         <Image
-          source={{ uri: novel.cover }}
+          source={{ uri }}
           progressiveRenderingEnabled={settings.progressive}
           style={[styles.novelCover, { ...novelItemDimensions }]}
         />
