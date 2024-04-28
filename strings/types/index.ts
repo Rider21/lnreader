@@ -425,4 +425,5 @@ export interface StringMap {
   'wsrv.progressive.PNG.description': 'string';
   'wsrv.progressive.JPEG.label': 'string';
   'wsrv.progressive.JPEG.description': 'string';
+  'wsrv.requiresAppRestart': 'string';
 }

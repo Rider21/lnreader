@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import { Image } from 'react-native';
 
 import { IconButtonV2 } from '@components';
-
+import { resolveImage, settings } from '@services/weserv/weserv';
 import { History, NovelInfo } from '@database/types';
 import { ThemeColors } from '@theme/types';
 import { coverPlaceholderColor } from '@theme/colors';
@@ -25,6 +25,9 @@ const HistoryCard: React.FC<HistoryCardProps> = ({
   handleRemoveFromHistory,
   theme,
 }) => {
+  if (settings.status) {
+    history.novelCover = resolveImage(history.novelCover);
+  }
   return (
     <Pressable
       style={styles.container}
@@ -50,7 +53,11 @@ const HistoryCard: React.FC<HistoryCardProps> = ({
             })
           }
         >
-          <Image source={{ uri: history.novelCover }} style={styles.cover} />
+          <Image
+            source={{ uri: history.novelCover }}
+            progressiveRenderingEnabled={settings.progressive}
+            style={styles.cover}
+          />
         </Pressable>
         <View style={styles.detailsContainer}>
           <Text

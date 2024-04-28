@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
+import { resolveImage, settings } from '@services/weserv/weserv';
 
 import { Image } from 'react-native';
 import { coverPlaceholderColor } from '../theme/colors';
@@ -29,6 +30,9 @@ const ListView = ({
   isSelected,
   onLongPress,
 }: ListViewProps) => {
+  if (settings.status) {
+    item.cover = resolveImage(item.cover);
+  }
   return (
     <Pressable
       android_ripple={{ color: theme.rippleColor }}
@@ -45,6 +49,7 @@ const ListView = ({
         source={{
           uri: item.cover,
         }}
+        progressiveRenderingEnabled={settings.progressive}
         style={[styles.extensionIcon, inLibraryBadge ? { opacity: 0.5 } : {}]}
       />
       <Text

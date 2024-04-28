@@ -527,6 +527,7 @@
         "label": "Progressive",
         "description": "JPEGs become progressive. (increases file size)"
       }
-    }
+    },
+    "requiresAppRestart": "Requires app restart to take effect"
   }
 }

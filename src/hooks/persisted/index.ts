@@ -8,7 +8,6 @@ export {
   useLibrarySettings,
   useChapterGeneralSettings,
   useChapterReaderSettings,
-  useWSRV_Settings,
 } from './useSettings';
 export { default as usePlugins } from './usePlugins';
 export { getTracker, useTracker } from './useTracker';

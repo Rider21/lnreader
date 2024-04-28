@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Image } from 'react-native';
+import { resolveImage, settings } from '@services/weserv/weserv';
 
 import { ThemeColors } from '@theme/types';
 
@@ -16,6 +17,9 @@ interface Props {
 }
 
 const MalNovelCard: React.FC<Props> = ({ novel, onPress, theme }) => {
+  if (settings.status) {
+    novel.novelCover = resolveImage(novel.novelCover);
+  }
   return (
     <View style={[styles.container, { backgroundColor: theme.overlay3 }]}>
       <Pressable
@@ -23,7 +27,11 @@ const MalNovelCard: React.FC<Props> = ({ novel, onPress, theme }) => {
         onPress={onPress}
         android_ripple={{ color: theme.rippleColor }}
       >
-        <Image source={{ uri: novel.novelCover }} style={styles.cover} />
+        <Image
+          source={{ uri: novel.novelCover }}
+          progressiveRenderingEnabled={settings.progressive}
+          style={styles.cover}
+        />
         <View style={styles.infoContainer}>
           <Text
             style={[styles.title, { color: theme.onSurface }]}

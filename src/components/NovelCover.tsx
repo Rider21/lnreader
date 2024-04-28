@@ -12,6 +12,7 @@ import { Image } from 'react-native';
 import ListView from './ListView';
 
 import { useDeviceOrientation } from '@hooks';
+import { resolveImage, settings } from '@services/weserv/weserv';
 import { coverPlaceholderColor } from '../theme/colors';
 import { DisplayModes } from '@screens/library/constants/constants';
 import { LibraryNovelInfo, NovelInfo } from '@database/types';
@@ -75,7 +76,7 @@ function NovelCover<TNovel extends NovelItem | NovelInfo | LibraryNovelInfo>({
 
   const selectNovel = () => onLongPress(item);
 
-  const uri = item.cover;
+  const uri = settings.status ? resolveImage(item.cover) : item.cover;
   return displayMode !== DisplayModes.List ? (
     <View
       style={[
@@ -122,6 +123,7 @@ function NovelCover<TNovel extends NovelItem | NovelInfo | LibraryNovelInfo>({
         </View>
         <Image
           source={{ uri, headers: { 'User-Agent': getUserAgent() } }}
+          progressiveRenderingEnabled={settings.progressive}
           style={[
             {
               height: coverHeight,

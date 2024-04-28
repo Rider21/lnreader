@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 import { Image } from 'react-native';
 
 import { coverPlaceholderColor } from '@theme/colors';
+import { resolveImage, settings } from '@services/weserv/weserv';
 
 import { NovelItem } from '@plugins/types';
 import { ThemeColors } from '@theme/types';
@@ -37,6 +38,9 @@ const GlobalSearchNovelItem: React.FC<Props> = ({
     }),
     [inLibrary],
   );
+  if (settings.status) {
+    novel.cover = resolveImage(novel.cover);
+  }
 
   return (
     <View style={styles.novelItem}>
@@ -48,6 +52,7 @@ const GlobalSearchNovelItem: React.FC<Props> = ({
       >
         <Image
           source={{ uri: novel.cover }}
+          progressiveRenderingEnabled={settings.progressive}
           style={[styles.novelCover, { ...novelItemDimensions }]}
         />
         {inLibrary ? (

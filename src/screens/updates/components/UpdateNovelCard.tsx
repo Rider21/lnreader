@@ -15,6 +15,7 @@ import { useDownload, useTheme } from '@hooks/persisted';
 import { noop } from 'lodash-es';
 import { RootStackParamList } from '@navigators/types';
 import { FlatList } from 'react-native-gesture-handler';
+import { resolveImage, settings } from '@services/weserv/weserv';
 
 const NovelCover = ({
   uri,
@@ -23,9 +24,16 @@ const NovelCover = ({
   uri: string;
   navigateToNovel: () => void;
 }) => {
+  if (settings.status) {
+    uri = resolveImage(uri);
+  }
   return (
     <Pressable onPress={navigateToNovel}>
-      <Image source={{ uri }} style={styles.cover} />
+      <Image
+        source={{ uri }}
+        progressiveRenderingEnabled={settings.progressive}
+        style={styles.cover}
+      />
     </Pressable>
   );
 };

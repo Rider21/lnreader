@@ -23,6 +23,7 @@ import { fetchImage } from '@services/plugin/fetch';
 import { showToast } from '@utils/showToast';
 import { ThemeColors } from '@theme/types';
 import { getString } from '@strings/translations';
+import { resolveImage, settings } from '@services/weserv/weserv';
 
 interface CoverImageProps {
   children: React.ReactNode;
@@ -56,11 +57,18 @@ const CoverImage = ({
   theme,
   hideBackdrop,
 }: CoverImageProps) => {
+  if (settings.status && source.uri) {
+    source.uri = resolveImage(source.uri);
+  }
   if (hideBackdrop) {
     return <View>{children}</View>;
   } else {
     return (
-      <ImageBackground source={source} style={styles.coverImage}>
+      <ImageBackground
+        source={source}
+        progressiveRenderingEnabled={settings.progressive}
+        style={styles.coverImage}
+      >
         <View
           style={{
             flex: 1,
@@ -95,10 +103,18 @@ const NovelThumbnail = ({
   const [expanded, setExpanded] = useState(false);
   const bottom = useSafeAreaInsets().bottom + 10;
 
+  if (settings.status && source.uri) {
+    source.uri = resolveImage(source.uri);
+  }
+
   if (!expanded) {
     return (
       <TouchableWithoutFeedback onPress={() => setExpanded(!expanded)}>
-        <Image source={source} style={styles.novelThumbnail} />
+        <Image
+          source={source}
+          progressiveRenderingEnabled={settings.progressive}
+          style={styles.novelThumbnail}
+        />
       </TouchableWithoutFeedback>
     );
   } else {
@@ -116,6 +132,7 @@ const NovelThumbnail = ({
         >
           <Image
             source={source}
+            progressiveRenderingEnabled={settings.progressive}
             style={{
               width: Dimensions.get('window').width,
               height: (Dimensions.get('window').width * 3) / 2,

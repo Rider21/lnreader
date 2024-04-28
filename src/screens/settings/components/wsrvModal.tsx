@@ -1,12 +1,18 @@
-import * as React from 'react';
+import React, { useState } from 'react';
+import { isEqual } from 'lodash-es';
 import { Text, Pressable, View, StyleSheet } from 'react-native';
 import { Modal, Menu, TextInput, overlay } from 'react-native-paper';
 import Slider from './Slider.tsx';
 import SettingSwitch from './SettingSwitch';
 import { useBoolean } from '@hooks';
-import { useWSRV_Settings } from '@hooks/persisted';
+import { setMMKVObject } from '@utils/mmkv/mmkv';
+import {
+  availableFormats,
+  settings,
+  WSRV_SETTINGS,
+} from '@services/weserv/weserv';
 import { getString } from '@strings/translations';
-const availableFormats: string[] = ['JPEG', 'PNG', 'TIFF', 'WEBP'];
+import { showToast } from '@utils/showToast';
 
 interface wsrvProps {
   theme: ThemeColors;
@@ -19,16 +25,7 @@ const WSRV: React.FC<wsrvProps> = ({
   displayModalVisible,
   closeModal,
 }) => {
-  const {
-    status,
-    output,
-    compressionLevel,
-    quality,
-    adaptiveFilter,
-    progressive,
-    lossless,
-    setWSRV_Settings,
-  } = useWSRV_Settings();
+  const [val, setVal] = useState<WSRV_SETTINGS>(settings);
 
   const {
     value: isVisible,
@@ -40,7 +37,14 @@ const WSRV: React.FC<wsrvProps> = ({
     <Modal
       visible={displayModalVisible}
       style={{ flex: 1 }}
-      onDismiss={closeModal}
+      onDismiss={() => {
+        if (!isEqual(settings, val)) {
+          showToast(getString('requiresAppRestart'));
+          setMMKVObject('WSRV', val);
+          settings = val;
+        }
+        closeModal();
+      }}
       contentContainerStyle={[
         styles.modalContainer,
         { backgroundColor: overlay(2, theme.surface) },
@@ -48,8 +52,8 @@ const WSRV: React.FC<wsrvProps> = ({
     >
       <SettingSwitch
         label="WSRV"
-        value={status}
-        onPress={() => setWSRV_Settings({ status: !status })}
+        value={val.status}
+        onPress={() => setVal({ ...val, status: !val.status })}
         theme={theme}
       />
 
@@ -75,7 +79,7 @@ const WSRV: React.FC<wsrvProps> = ({
                     {` Format image `}
                   </Text>
                 }
-                value={output}
+                value={val.output}
                 editable={false}
                 theme={{ colors: { background: 'transparent' } }}
                 outlineColor={isVisible ? theme.primary : theme.onSurface}
@@ -91,14 +95,14 @@ const WSRV: React.FC<wsrvProps> = ({
           }
           onDismiss={closeCard}
         >
-          {availableFormats.map(val => {
+          {availableFormats.map(key => {
             return (
               <Menu.Item
-                key={val}
-                title={val}
+                key={key}
+                title={key}
                 titleStyle={{ color: theme.onSurfaceVariant }}
                 onPress={() => {
-                  setWSRV_Settings({ output: val });
+                  setVal({ ...val, output: key });
                   closeCard();
                 }}
               />
@@ -106,54 +110,62 @@ const WSRV: React.FC<wsrvProps> = ({
           })}
         </Menu>
       </View>
-      {type === 'PNG' ? (
+      {val.output === 'PNG' ? (
         <>
           <Slider
-            value={compressionLevel}
+            value={val.compressionLevel}
             label={getString('wsrv.compress.label')}
             description={getString('wsrv.compress.description')}
             onSlidingComplete={value =>
-              setWSRV_Settings({ compressionLevel: value })
+              setVal({ ...val, compressionLevel: value })
             }
             area={[0, 9]}
             theme={theme}
           />
           <SettingSwitch
-            value={adaptiveFilter}
+            value={val.adaptiveFilter}
             label={getString('wsrv.adaptiveFilter.label')}
             description={getString('wsrv.adaptiveFilter.description')}
             onPress={() =>
-              setWSRV_Settings({ adaptiveFilter: !adaptiveFilter })
+              setVal({ ...val, adaptiveFilter: !val.adaptiveFilter })
             }
             theme={theme}
           />
         </>
       ) : (
         <Slider
-          value={quality}
+          value={val.quality}
           label={getString('wsrv.quality.label')}
           description={getString('wsrv.quality.description')}
-          onSlidingComplete={value => setWSRV_Settings({ quality: value })}
+          onSlidingComplete={value => setVal({ ...val, quality: value })}
           area={[1, 100]}
           theme={theme}
-          disabled={lossless}
+          disabled={val.lossless}
         />
       )}
-      {(type === 'PNG' || type === 'JPEG') && (
+      {(val.output === 'PNG' || val.output === 'JPEG') && (
         <SettingSwitch
-          value={progressive}
-          label={getString(`wsrv.progressive.${type}.label`)}
-          description={getString(`wsrv.progressive.${type}.description`)}
-          onPress={() => setWSRV_Settings({ progressive: !progressive })}
+          value={val.progressive}
+          label={
+            val.output === 'JPEG'
+              ? getString('wsrv.progressive.JPEG.label')
+              : getString('wsrv.progressive.PNG.description')
+          }
+          description={
+            val.output === 'JPEG'
+              ? getString('wsrv.progressive.JPEG.description')
+              : getString('wsrv.progressive.PNG.description')
+          }
+          onPress={() => setVal({ ...val, progressive: !val.progressive })}
           theme={theme}
         />
       )}
-      {type === 'WEBP' && (
+      {output === 'WEBP' && (
         <SettingSwitch
-          value={lossless}
+          value={val.lossless}
           label={getString('wsrv.lossless.label')}
           description={getString('wsrv.lossless.description')}
-          onPress={() => setWSRV_Settings({ lossless: !lossless })}
+          onPress={() => setVal({ ...val, lossless: !val.lossless })}
           theme={theme}
         />
       )}

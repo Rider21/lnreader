@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Image, Pressable } from 'react-native';
 import { coverPlaceholderColor } from '@theme/colors';
 import { ThemeColors } from '@theme/types';
 import { NovelItem } from '@plugins/types';
+import { resolveImage, settings } from '@services/weserv/weserv';
 
 interface GlobalSearchNovelCoverProps {
   novel: NovelItem;
@@ -20,8 +21,7 @@ const GlobalSearchNovelCover = ({
   onLongPress,
 }: GlobalSearchNovelCoverProps) => {
   const { name, cover } = novel;
-
-  const uri = cover;
+  const uri = settings.status ? resolveImage(cover) : cover;
 
   return (
     <View style={styles.container}>
@@ -34,7 +34,7 @@ const GlobalSearchNovelCover = ({
         <Image
           source={{ uri }}
           style={[styles.novelCover, inLibrary && { opacity: 0.5 }]}
-          progressiveRenderingEnabled={true}
+          progressiveRenderingEnabled={settings.progressive}
         />
         <Text
           numberOfLines={2}
