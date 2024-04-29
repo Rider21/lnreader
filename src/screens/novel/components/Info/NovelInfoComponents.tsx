@@ -57,7 +57,7 @@ const CoverImage = ({
   theme,
   hideBackdrop,
 }: CoverImageProps) => {
-  const uri = settings.status ? resolveImage(source.uri) : source.uri;
+  const uri = resolveImage(source.uri);
 
   if (hideBackdrop) {
     return <View>{children}</View>;
@@ -101,8 +101,10 @@ const NovelThumbnail = ({
   const [downloading, setDownloading] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const bottom = useSafeAreaInsets().bottom + 10;
-
-  const uri = settings.status ? resolveImage(source.uri) : source.uri;
+  if (!source.uri) {
+    console.log('wtf');
+  }
+  const uri = resolveImage(source.uri);
 
   if (!expanded) {
     return (
@@ -170,10 +172,10 @@ const NovelThumbnail = ({
                   await RNFS.mkdir(DownloadFolder);
                 }
                 const filePath = DownloadFolder + '/' + novelId + '.png';
-                if (uri.startsWith('file://')) {
-                  await RNFS.copyFile(uri, filePath);
+                if (source.uri.startsWith('file://')) {
+                  await RNFS.copyFile(source.uri, filePath);
                 } else {
-                  const image = await fetchImage(pluginId, uri);
+                  const image = await fetchImage(pluginId, source.uri);
                   if (image) {
                     await RNFS.writeFile(filePath, image, 'base64');
                   }

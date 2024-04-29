@@ -11,8 +11,6 @@ export interface WSRV_SETTINGS {
   progressive: boolean;
   lossless: boolean;
 }
-
-export const availableFormats: string[] = ['jpg', 'png', 'tiff', 'webp'];
 const defaultSettings: WSRV_SETTINGS = {
   status: true,
   output: 'jpg',
@@ -22,14 +20,17 @@ const defaultSettings: WSRV_SETTINGS = {
   progressive: true,
   lossless: false,
 };
-const baseURL = 'https://wsrv.nl/';
+const baseURL = 'https://wsrv.nl';
+
+export const availableFormats: string[] = ['jpg', 'png', 'tiff', 'webp'];
 export const settings = getMMKVObject<WSRV_SETTINGS>('WSRV') || defaultSettings;
 
 export const resolveImage = (url: string) => {
   if (!url) {
     return defaultCover;
   }
-  if (url.startsWith('http')) {
+  if (settings.status && url.startsWith('http')) {
+    console.log(url);
     return gen(url) + '&default=1';
   }
   return url;
@@ -55,20 +56,18 @@ function gen(url) {
     imageURL +=
       '&l=' +
       settings.compressionLevel +
-      (settings.adaptiveFilter ? '&af' : '');
+      (settings.adaptiveFilter ? '&af' : '') +
+      (settings.progressive ? '&li' : '');
   } else if (settings.lossless && settings.output === 'webp') {
     imageURL += '&ll';
   } else {
     imageURL += '&q=' + settings.quality;
   }
 
-  if (
-    settings.progressive &&
-    (settings.output === 'png' || settings.output === 'jpg')
-  ) {
+  if (settings.progressive && settings.output === 'jpg') {
     imageURL += '&il';
   }
-  console.log(url, imageURL);
+
   return imageURL;
 }
 

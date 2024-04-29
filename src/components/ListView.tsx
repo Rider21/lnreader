@@ -30,7 +30,7 @@ const ListView = ({
   isSelected,
   onLongPress,
 }: ListViewProps) => {
-  const uri = settings.status ? resolveImage(item.cover) : item.cover;
+  const uri = resolveImage(item.cover);
   return (
     <Pressable
       android_ripple={{ color: theme.rippleColor }}

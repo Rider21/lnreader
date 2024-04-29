@@ -11,9 +11,7 @@ interface Props {
 }
 
 const MalNovelCard: React.FC<Props> = ({ novel, onPress, theme }) => {
-  const uri = settings.status
-    ? resolveImage(novel.novelCover)
-    : novel.novelCover;
+  const uri = resolveImage(novel.novelCover);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.overlay3 }]}>

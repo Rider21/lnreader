@@ -25,9 +25,7 @@ const HistoryCard: React.FC<HistoryCardProps> = ({
   handleRemoveFromHistory,
   theme,
 }) => {
-  const uri = settings.status
-    ? resolveImage(novel.novelCover)
-    : novel.novelCover;
+  const uri = resolveImage(history.novelCover);
 
   return (
     <Pressable

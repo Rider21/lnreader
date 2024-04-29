@@ -75,8 +75,8 @@ function NovelCover<TNovel extends NovelItem | NovelInfo | LibraryNovelInfo>({
   );
 
   const selectNovel = () => onLongPress(item);
+  const uri = resolveImage(item.cover);
 
-  const uri = settings.status ? resolveImage(item.cover) : item.cover;
   return displayMode !== DisplayModes.List ? (
     <View
       style={[

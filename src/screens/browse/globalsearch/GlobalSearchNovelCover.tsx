@@ -21,7 +21,7 @@ const GlobalSearchNovelCover = ({
   onLongPress,
 }: GlobalSearchNovelCoverProps) => {
   const { name, cover } = novel;
-  const uri = settings.status ? resolveImage(cover) : cover;
+  const uri = resolveImage(cover);
 
   return (
     <View style={styles.container}>

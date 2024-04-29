@@ -38,7 +38,7 @@ const GlobalSearchNovelItem: React.FC<Props> = ({
     }),
     [inLibrary],
   );
-  const uri = settings.status ? resolveImage(novel.cover) : novel.cover;
+  const uri = resolveImage(novel.cover);
 
   return (
     <View style={styles.novelItem}>

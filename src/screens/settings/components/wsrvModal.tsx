@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
-import { isEqual } from 'lodash-es';
+import React from 'react';
+import { assign, isEqual } from 'lodash-es';
 import { Text, Pressable, View, StyleSheet } from 'react-native';
 import { Modal, Menu, TextInput, overlay } from 'react-native-paper';
 import Slider from './Slider.tsx';
 import SettingSwitch from './SettingSwitch';
 import { useBoolean } from '@hooks';
-import { setMMKVObject } from '@utils/mmkv/mmkv';
+import { useMMKVObject } from 'react-native-mmkv';
 import {
   availableFormats,
   settings,
   WSRV_SETTINGS,
 } from '@services/weserv/weserv';
 import { getString } from '@strings/translations';
-import { showToast } from '@utils/showToast';
 
 interface wsrvProps {
   theme: ThemeColors;
@@ -25,7 +24,7 @@ const WSRV: React.FC<wsrvProps> = ({
   displayModalVisible,
   closeModal,
 }) => {
-  const [val, setVal] = useState<WSRV_SETTINGS>(settings);
+  const [val, setVal] = useMMKVObject<WSRV_SETTINGS>('WSRV');
 
   const {
     value: isVisible,
@@ -39,9 +38,7 @@ const WSRV: React.FC<wsrvProps> = ({
       style={{ flex: 1 }}
       onDismiss={() => {
         if (!isEqual(settings, val)) {
-          showToast(getString('requiresAppRestart'));
-          setMMKVObject('WSRV', val);
-          settings = val;
+          assign(settings, val);
         }
         closeModal();
       }}
@@ -63,7 +60,7 @@ const WSRV: React.FC<wsrvProps> = ({
           visible={isVisible}
           contentStyle={{ backgroundColor: theme.surfaceVariant }}
           anchor={
-            <Pressable style={{ flex: 1, width: '95%' }} onPress={toggleCard}>
+            <Pressable style={{ flex: 1 }} onPress={toggleCard}>
               <TextInput
                 mode="outlined"
                 label={
@@ -187,7 +184,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   pickerContainer: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 12,

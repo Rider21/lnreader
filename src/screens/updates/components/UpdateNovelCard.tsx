@@ -23,7 +23,7 @@ const NovelCover = ({
   novelCover: string;
   navigateToNovel: () => void;
 }) => {
-  const uri = settings.status ? resolveImage(novelCover) : novelCover;
+  const uri = resolveImage(novelCover);
 
   return (
     <Pressable onPress={navigateToNovel} style={{ alignSelf: 'center' }}>

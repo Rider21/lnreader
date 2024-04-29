@@ -7,6 +7,7 @@ import color from 'color';
 import { Button } from '@components';
 import { getTracker } from '@hooks/persisted';
 import { getString } from '@strings/translations';
+import { resolveImage, settings } from '@services/weserv/weserv';
 
 const TrackSearchDialog = ({
   tracker,
@@ -67,7 +68,10 @@ const TrackSearchDialog = ({
           />
         ) : null}
         <Image
-          source={{ uri: item.coverImage }}
+          source={{
+            uri: resolveImage(item.coverImage),
+          }}
+          progressiveRenderingEnabled={settings.progressive}
           style={{ height: 150, width: 100, borderRadius: 4 }}
         />
         <Text
