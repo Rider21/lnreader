@@ -24,7 +24,7 @@ const WSRV: React.FC<wsrvProps> = ({
   displayModalVisible,
   closeModal,
 }) => {
-  const [val, setVal] = useMMKVObject<WSRV_SETTINGS>('WSRV');
+  const [val = settings, setVal] = useMMKVObject<WSRV_SETTINGS>('WSRV');
 
   const {
     value: isVisible,

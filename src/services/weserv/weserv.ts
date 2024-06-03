@@ -12,7 +12,7 @@ export interface WSRV_SETTINGS {
   lossless: boolean;
 }
 const defaultSettings: WSRV_SETTINGS = {
-  status: true,
+  status: false,
   output: 'jpg',
   compressionLevel: 6,
   quality: 80,
@@ -58,7 +58,7 @@ function gen(url) {
       settings.compressionLevel +
       (settings.adaptiveFilter ? '&af' : '') +
       (settings.progressive ? '&li' : '');
-  } else if (settings.lossless && settings.output === 'webp') {
+  } else if (settings.output === 'webp' && settings.lossless) {
     imageURL += '&ll';
   } else {
     imageURL += '&q=' + settings.quality;
