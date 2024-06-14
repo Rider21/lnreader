@@ -5,6 +5,9 @@
     "scheme": "lnreader",
     "plugins": [
       "expo-localization"
-    ]
+    ],
+    "android": {
+      "package": "com.rajarsheechatterjee.LNReader"
+    }
   }
 }

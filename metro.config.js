@@ -1,9 +1,14 @@
-// Learn more https://docs.expo.io/guides/customizing-metro
+const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
+
+/**
+ * Metro configuration
+ * https://reactnative.dev/docs/metro
+ *
+ * @type {import('metro-config').MetroConfig}
+ */
+
 const path = require('path');
 const fs = require('fs');
-const { mergeConfig } = require('metro-config');
-const { getDefaultConfig } = require('@react-native/metro-config');
-const defaultConfig = getDefaultConfig(__dirname);
 
 const map = {
   '.ico': 'image/x-icon',
@@ -14,7 +19,8 @@ const map = {
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
 };
-const customConfig = {
+
+const config = {
   server: {
     port: 8081,
     enhanceMiddleware: (metroMiddleware, metroServer) => {
@@ -41,4 +47,5 @@ const customConfig = {
     },
   },
 };
-module.exports = mergeConfig(defaultConfig, customConfig);
+
+module.exports = mergeConfig(getDefaultConfig(__dirname), config);

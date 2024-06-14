@@ -2,10 +2,10 @@ name: Lint
 on:
   push:
     branches:
-      - master
+      - rn-74
   pull_request:
     branches:
-      - master
+      - rn-74
 
 jobs:
   build:

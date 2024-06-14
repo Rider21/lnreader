@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-      - master
+      - rn-74
 jobs:
   build-android:
     name: Build App
