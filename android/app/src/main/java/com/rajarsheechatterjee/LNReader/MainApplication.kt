@@ -13,52 +13,53 @@ import com.rajarsheechatterjee.EpubUtil.EpubUtilPackage
 import com.rajarsheechatterjee.FileManager.FileManagerPackage
 import com.rajarsheechatterjee.VolumeButtonListener.VolumeButtonListenerPackage
 import com.rajarsheechatterjee.ZipArchive.ZipArchivePackage
-import expo.modules.ApplicationLifecycleDispatcher.onApplicationCreate
-import expo.modules.ApplicationLifecycleDispatcher.onConfigurationChanged
+import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
 
 class MainApplication : Application(), ReactApplication {
-    private val mReactNativeHost: ReactNativeHost =
-        ReactNativeHostWrapper(this, object : DefaultReactNativeHost(this) {
-            override fun getUseDeveloperSupport(): Boolean {
-                return BuildConfig.DEBUG
-            }
 
+  override val reactNativeHost: ReactNativeHost = ReactNativeHostWrapper(
+        this,
+        object : DefaultReactNativeHost(this) {
             override fun getPackages(): List<ReactPackage> {
+                // Packages that cannot be autolinked yet can be added manually here, for example:
+                // packages.add(new MyReactNativePackage());
                 val packages: MutableList<ReactPackage> = PackageList(this).packages
-                packages.add(VolumeButtonListenerPackage())
-                packages.add(ZipArchivePackage())
-                packages.add(FileManagerPackage())
-                packages.add(EpubUtilPackage())
+                packages.add(new VolumeButtonListenerPackage())
+                packages.add(new ZipArchivePackage())
+                packages.add(new FileManagerPackage())
+                packages.add(new EpubUtilPackage())
                 return packages
-            }
+          }
 
-            override fun getJSMainModuleName(): String {
-                return "index"
-            }
+        override fun getJSMainModuleName(): String = "index" //".expo/.virtual-metro-entry"
 
-            override val isNewArchEnabled: Boolean
-                get() = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
-            override val isHermesEnabled: Boolean
-                get() = BuildConfig.IS_HERMES_ENABLED
-        })
+        override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
 
+        override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
+        override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
+      }
+  )
+
+    override val reactHost: ReactHost
+    get() = ReactNativeHostWrapper.createReactHost(applicationContext, reactNativeHost)
+    
     override fun getReactNativeHost(): ReactNativeHost {
         return mReactNativeHost
     }
 
     override fun onCreate() {
         super.onCreate()
-        SoLoader.init(this,  /* native exopackage */false)
+        SoLoader.init(this, false)
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
             // If you opted-in for the New Architecture, we load the native entry point for this app.
             load()
         }
-        onApplicationCreate(this)
+        ApplicationLifecycleDispatcher.onApplicationCreate(this)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        onConfigurationChanged(this, newConfig)
+        ApplicationLifecycleDispatcher.onConfigurationChanged(this, newConfig)
     }
 }
