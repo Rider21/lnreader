@@ -1,9 +1,7 @@
 import 'react-native-gesture-handler';
 import { enableFreeze } from 'react-native-screens';
-import { install } from 'react-native-quick-crypto';
 
 enableFreeze(true);
-install();
 
 import React from 'react';
 import { StatusBar } from 'react-native';
