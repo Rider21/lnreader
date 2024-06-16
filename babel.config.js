@@ -1,7 +1,7 @@
 module.exports = function (api) {
   api.cache(true);
   return {
-    presets: ['babel-preset-expo', 'module:@react-native/babel-preset'],
+    presets: ['babel-preset-expo'],
     plugins: [
       [
         'module-resolver',
@@ -20,6 +20,9 @@ module.exports = function (api) {
             '@navigators': './src/navigators',
             '@native': './src/native',
             '@api': './src/api',
+            'crypto': 'react-native-quick-crypto',
+            'stream': 'readable-stream',
+            'buffer': '@craftzdog/react-native-buffer',
           },
         },
       ],
