@@ -64,7 +64,8 @@
     "react-native-vector-icons": "^9.0.0",
     "react-native-webview": "13.8.6",
     "sanitize-html": "^2.13.0",
-    "urlencode": "^2.0.0"
+    "urlencode": "^2.0.0",
+    "expo-asset": "~10.0.9"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

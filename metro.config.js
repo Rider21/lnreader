@@ -21,6 +21,15 @@ const map = {
 };
 
 const config = {
+  transformer: {
+    assetPlugins: ['expo-asset/tools/hashAssetFiles'],
+    getTransformOptions: async () => ({
+      transform: {
+        experimentalImportSupport: false,
+        inlineRequires: false,
+      },
+    }),
+  },
   server: {
     port: 8081,
     enhanceMiddleware: (metroMiddleware, metroServer) => {
