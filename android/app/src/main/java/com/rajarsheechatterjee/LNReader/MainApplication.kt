@@ -25,10 +25,10 @@ class MainApplication : Application(), ReactApplication {
                 // Packages that cannot be autolinked yet can be added manually here, for example:
                 // packages.add(new MyReactNativePackage());
                 val packages: MutableList<ReactPackage> = PackageList(this).packages
-                packages.add(new VolumeButtonListenerPackage())
-                packages.add(new ZipArchivePackage())
-                packages.add(new FileManagerPackage())
-                packages.add(new EpubUtilPackage())
+                packages.add(VolumeButtonListenerPackage())
+                packages.add(ZipArchivePackage())
+                packages.add(FileManagerPackage())
+                packages.add(EpubUtilPackage())
                 return packages
           }
 
