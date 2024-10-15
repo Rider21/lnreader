@@ -44,7 +44,10 @@ export const fetchApi = async (
   init?: FetchInit,
 ): Promise<Response> => {
   init = makeInit(init);
-  return await fetch(url, init);
+  const res = await fetch(url, init);
+  console.log(res);
+  res.headers.forEach((value, name) => console.log(name, value));
+  return res;
 };
 
 const FILE_READER_PREFIX_LENGTH = 'data:application/octet-stream;base64,'
